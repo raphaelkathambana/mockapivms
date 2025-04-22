@@ -1,0 +1,189 @@
+---
+config:
+  theme: neutral
+---
+erDiagram
+    CUSTOMER_TYPE {
+        int customer_type_id PK "Primary Key"
+        string type_name "Customer Type (INDIVIDUAL, DEALERSHIP)"
+    }
+    PURCHASE_CONTRACT {
+        int contract_id PK "Primary Key"
+        string vin FK "FK to VEHICLE"
+        int customer_id FK "FK to BUYER"
+        int employee_id FK "FK to EMPLOYEE"
+        date contract_date "Contract Date"
+        blob digital_signature "Digital Signature"
+    }
+    EMPLOYEE {
+        int employee_id PK "Primary Key"
+        string first_name "First Name"
+        string last_name "Last Name"
+        string role "Role (Sales, Manager, etc.)"
+        string email "Email"
+        string phone_number "Phone Number"
+    }
+    SELLER {
+        int seller_id PK "Primary Key"
+        string first_name "First Name"
+        string last_name "Last Name"
+        string gender "Gender"
+        int address_id FK "FK to ADDRESS"
+        string phone_number "Phone Number"
+        string email "Email"
+        int customer_type_id FK "FK to CUSTOMER_TYPE"
+    }
+    SALES_LOG {
+        int log_id PK "Primary Key"
+        timestamp timestamp "Log Timestamp"
+        string vin FK "FK to VEHICLE"
+        int employee_id FK "FK to EMPLOYEE"
+        string customer_number FK "Linked Customer Number"
+        string status_change "Status Change Details"
+    }
+    BUYER {
+        int customer_id PK "Primary Key"
+        string customer_number "Unique Customer Number"
+        string first_name "First Name"
+        string last_name "Last Name"
+        int address_id FK "FK to ADDRESS"
+        string phone_number "Phone Number"
+        string email "Email"
+    }
+    OWNER_TYPE {
+        int owner_type_id PK "Primary Key"
+        string type_name "Owner Type (Private, Company, Rental)"
+    }
+    FUEL_TYPE {
+        int fuel_type_id PK "Primary Key"
+        string fuel_name "Fuel Type (Gasoline, Diesel, Electric)"
+    }
+    MANUFACTURER {
+        int manufacturer_id PK "Primary Key"
+        string name "Manufacturer name"
+    }
+    MODEL {
+        int model_id PK "Primary Key"
+        int manufacturer_id FK "FK to MANUFACTURER"
+        string model_name "Model name"
+    }
+    TRANSMISSION {
+        int transmission_id PK "Primary Key"
+        string type "Transmission type (Automatic/Manual)"
+    }
+    VEHICLE_TYPE {
+        int type_id PK "Primary Key"
+        string type_name "Vehicle type (Convertible, SUV, etc.)"
+    }
+    DRIVE_TYPE {
+        int drive_type_id PK "Primary Key"
+        string drive_type_name "Drive type (FWD, RWD, AWD)"
+    }
+    VEHICLE {
+        string vin PK "Primary Key"
+        int manufacturer_id FK "FK to MANUFACTURER"
+        int model_id FK "FK to MODEL"
+        date first_registration "First Registration Date"
+        int mileage "Mileage"
+        int transmission_id FK "FK to TRANSMISSION"
+        int type_id FK "FK to VEHICLE_TYPE"
+        int drive_type_id FK "FK to DRIVE_TYPE"
+        string color "Color"
+        decimal purchase_price "Purchase Price"
+        decimal selling_price "Selling Price"
+        int num_previous_owners "Number of Previous Owners"
+        int owner_type_id FK "FK to OWNER_TYPE"
+        date general_inspection_next_due_date "Next Inspection Due Date"
+        date evaluation_date "Evaluation Date"
+        date last_edited_date "Last Edited Date"
+        int days_on_stock "Days on Stock"
+        int buyer_id FK "FK to BUYER"
+        int seller_id FK "FK to SELLER"
+        string status "Vehicle Status (Available, Sold, Reserved)"
+        string customer_number FK "Linked Customer Number"
+        text additional_info "Special Requests"
+    }
+    VEHICLE_REGISTRATION {
+        int registration_id PK "Primary Key"
+        string vin FK "FK to VEHICLE"
+        string sepa_data "Payment Data"
+        string custom_license_plate "Custom License Plate"
+        date delivery_date "Delivery Date"
+    }
+    ENGINE_SPECIFICATION {
+        int engine_id PK "Primary Key"
+        string vin FK "FK to VEHICLE"
+        numeric kw "Engine power (kW)"
+        numeric hp "Engine power (HP)"
+        int ccm "Engine displacement (ccm)"
+        int fuel_type_id FK "FK to FUEL_TYPE"
+    }
+    DAMAGE_RECORD {
+        int damage_id PK "Primary Key"
+        string vin FK "FK to VEHICLE"
+        string damage_type "Damage Type (Accident, Other)"
+        string location "Damage location"
+        string description "Damage description"
+        decimal cost "Damage cost"
+    }
+    TIRE {
+        int tire_id PK "Primary Key"
+        string vin FK "FK to VEHICLE"
+        numeric tread_depth "Tread depth"
+        string rim_type "Rim type"
+    }
+    INSPECTION_RECORD {
+        int inspection_id PK "Primary Key"
+        string vin FK "FK to VEHICLE"
+        date inspection_date "Inspection date"
+        int mileage_at_inspection "Mileage at inspection"
+        string service_details "Service details"
+    }
+    ADDITIONAL_EQUIPMENT {
+        int equipment_id PK "Primary Key"
+        string vin FK "FK to VEHICLE"
+        string equipment_description "Equipment description"
+    }
+    BLACKLIST {
+        int rule_id PK "Primary Key"
+        jsonb rule_data "Blacklist Criteria JSON"
+        string rejection_reason "Rejection Reason"
+    }
+    ADDRESS {
+        int address_id PK "Primary Key"
+        string street "Street"
+        string house_number "House number"
+        string city "City"
+        string postal_code "Postal code"
+        string country "Country"
+    }
+
+    VEHICLE_REGISTRATION }|--|| VEHICLE : "registered to"
+    VEHICLE }|..|| MANUFACTURER : "manufactured by"
+    VEHICLE }|..|| MODEL : "has model"
+    PURCHASE_CONTRACT }|--|| VEHICLE : "contract for"
+    MODEL }|..|| MANUFACTURER : "belongs to"
+    VEHICLE }|..|| TRANSMISSION : "has transmission"
+    VEHICLE }|..|| VEHICLE_TYPE : "is a"
+    VEHICLE }|..|| DRIVE_TYPE : "driven by"
+    VEHICLE ||--|| BUYER : "bought by"
+    VEHICLE ||--|| SELLER : "sold by"
+    VEHICLE }o--|{ SALES_LOG : "logs sale of"
+    VEHICLE }|..|| OWNER_TYPE : "previously owned by"
+    VEHICLE ||--|| BUYER : "bought by"
+    VEHICLE ||--|| SELLER : "sold by"
+    PURCHASE_CONTRACT }|--|| BUYER : "signed by"
+    ENGINE_SPECIFICATION }|..|| VEHICLE : "engine specs for"
+    ENGINE_SPECIFICATION }|..|| FUEL_TYPE : "fuel type for"
+    DAMAGE_RECORD }|..|| VEHICLE : "damage record for"
+    TIRE }|..|| VEHICLE : "tire record for"
+    INSPECTION_RECORD }|..|| VEHICLE : "inspection record for"
+    ADDITIONAL_EQUIPMENT }|..|| VEHICLE : "equipment record for"
+    BLACKLIST }|..|| VEHICLE : "blacklist record for"
+    SELLER }|..|| ADDRESS : "resides at"
+    BUYER }|..|| ADDRESS : "resides at"
+    SELLER }|--|| CUSTOMER_TYPE : "has type"
+    SALES_LOG }|--o{ VEHICLE : "logs sale of"
+    SALES_LOG }|--o{ EMPLOYEE : "processed by"
+    PURCHASE_CONTRACT }|--|| EMPLOYEE : "processed by"
+    EMPLOYEE ||--o{ SALES_LOG : "logs transactions"
