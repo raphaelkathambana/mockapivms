@@ -26,12 +26,7 @@ class AdditionalEquipmentController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'vin' => 'required|string|exists:vehicles,vin',
-            'equipment_name' => 'required|string|max:255',
             'equipment_description' => 'required|string',
-            'installation_date' => 'required|date',
-            'price' => 'required|numeric|min:0',
-            'warranty_expiry' => 'nullable|date|after:installation_date',
-            'condition' => 'required|string|in:New,Good,Fair,Poor',
         ]);
 
         if ($validator->fails()) {
