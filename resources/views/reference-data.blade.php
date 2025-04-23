@@ -234,7 +234,7 @@
     <script>
         function referenceDataVisualizer() {
             return {
-                baseUrl: window.location.origin,
+                baseUrl: '/api',
                 selectedTableName: '',
                 selectedTableTitle: '',
                 tableData: [],

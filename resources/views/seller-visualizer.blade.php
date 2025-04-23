@@ -654,6 +654,7 @@
 </html> --}}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -662,15 +663,39 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-        .container { margin-top: 20px; }
-        .card { margin-bottom: 20px; }
-        #sellerForm, #sellerDetails { display: none; }
-        .loading { display: none; }
-        .error-message { color: red; margin-top: 10px; }
-        .success-message { color: green; margin-top: 10px; }
-        .tab-content { padding: 20px 0; }
+        .container {
+            margin-top: 20px;
+        }
+
+        .card {
+            margin-bottom: 20px;
+        }
+
+        #sellerForm,
+        #sellerDetails {
+            display: none;
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .success-message {
+            color: green;
+            margin-top: 10px;
+        }
+
+        .tab-content {
+            padding: 20px 0;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Seller Visualizer</h1>
@@ -791,6 +816,7 @@
                                     <tr>
                                         <th>VIN</th>
                                         <th>Vehicle</th>
+                                        <th>Sale Date</th>
                                         <th>Price</th>
                                         <th>Status</th>
                                     </tr>
@@ -913,26 +939,26 @@
                 }
 
                 fetch(url, {
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch sellers');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    hideLoading();
-                    renderSellers(data);
-                })
-                .catch(error => {
-                    hideLoading();
-                    showError('Error loading sellers: ' + error.message);
-                    console.error('Error:', error);
-                });
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch sellers');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        hideLoading();
+                        renderSellers(data);
+                    })
+                    .catch(error => {
+                        hideLoading();
+                        showError('Error loading sellers: ' + error.message);
+                        console.error('Error:', error);
+                    });
             }
 
             // Render sellers in the table
@@ -990,35 +1016,37 @@
             function loadDropdownOptions() {
                 // Load addresses
                 fetch('/api/addresses', {
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    addressIdField.innerHTML = '<option value="">Select Address</option>';
-                    data.forEach(address => {
-                        addressIdField.innerHTML += `<option value="${address.address_id}">${address.street} ${address.house_number}, ${address.postal_code} ${address.city}, ${address.country}</option>`;
-                    });
-                })
-                .catch(error => console.error('Error loading addresses:', error));
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        addressIdField.innerHTML = '<option value="">Select Address</option>';
+                        data.forEach(address => {
+                            addressIdField.innerHTML +=
+                                `<option value="${address.address_id}">${address.street} ${address.house_number}, ${address.postal_code} ${address.city}, ${address.country}</option>`;
+                        });
+                    })
+                    .catch(error => console.error('Error loading addresses:', error));
 
                 // Load customer types
                 fetch('/api/customer-types', {
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    customerTypeIdField.innerHTML = '<option value="">Select Customer Type</option>';
-                    data.forEach(type => {
-                        customerTypeIdField.innerHTML += `<option value="${type.customer_type_id}">${type.type_name}</option>`;
-                    });
-                })
-                .catch(error => console.error('Error loading customer types:', error));
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        customerTypeIdField.innerHTML = '<option value="">Select Customer Type</option>';
+                        data.forEach(type => {
+                            customerTypeIdField.innerHTML +=
+                                `<option value="${type.customer_type_id}">${type.type_name}</option>`;
+                        });
+                    })
+                    .catch(error => console.error('Error loading customer types:', error));
             }
 
             // Show form for adding a new seller
@@ -1096,35 +1124,35 @@
                 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
                 fetch('/api/sellers', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify(sellerData)
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(data => {
-                            throw new Error(data.message || 'Failed to create seller');
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    hideLoading();
-                    sellerForm.style.display = 'none';
-                    showFormBtn.style.display = 'block';
-                    showSuccess('Seller created successfully!');
-                    fetchSellers();
-                })
-                .catch(error => {
-                    hideLoading();
-                    showError('Error creating seller: ' + error.message);
-                    console.error('Error:', error);
-                });
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify(sellerData)
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(data => {
+                                throw new Error(data.message || 'Failed to create seller');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        hideLoading();
+                        sellerForm.style.display = 'none';
+                        showFormBtn.style.display = 'block';
+                        showSuccess('Seller created successfully!');
+                        fetchSellers();
+                    })
+                    .catch(error => {
+                        hideLoading();
+                        showError('Error creating seller: ' + error.message);
+                        console.error('Error:', error);
+                    });
             }
 
             // View seller details
@@ -1133,73 +1161,110 @@
                 hideError();
 
                 fetch(`/api/sellers/${id}`, {
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch seller details');
-                    }
-                    return response.json();
-                })
-                .then(seller => {
-                    hideLoading();
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch seller details');
+                        }
+                        return response.json();
+                    })
+                    .then(seller => {
+                        hideLoading();
 
-                    // Store seller ID for edit button
-                    sellerIdField.value = seller.seller_id;
+                        // Store seller ID for edit button
+                        sellerIdField.value = seller.seller_id;
 
-                    // Display seller details
-                    document.getElementById('detailName').textContent = `${seller.first_name} ${seller.last_name}`;
-                    document.getElementById('detailGender').textContent = seller.gender;
-                    document.getElementById('detailCustomerType').textContent = seller.customer_type ? seller.customer_type.type_name : '-';
-                    document.getElementById('detailPhoneNumber').textContent = seller.phone_number;
-                    document.getElementById('detailEmail').textContent = seller.email;
+                        // Display seller details
+                        document.getElementById('detailName').textContent =
+                            `${seller.first_name} ${seller.last_name}`;
+                        document.getElementById('detailGender').textContent = seller.gender;
+                        document.getElementById('detailCustomerType').textContent = seller.customer_type ?
+                            seller.customer_type.type_name : '-';
+                        document.getElementById('detailPhoneNumber').textContent = seller.phone_number;
+                        document.getElementById('detailEmail').textContent = seller.email;
 
-                    // Format address
-                    const address = seller.address;
-                    if (address) {
-                        document.getElementById('detailAddress').innerHTML = `
+                        // Format address
+                        const address = seller.address;
+                        if (address) {
+                            document.getElementById('detailAddress').innerHTML = `
                             ${address.street} ${address.house_number}<br>
                             ${address.postal_code} ${address.city}<br>
                             ${address.country}
                         `;
-                    } else {
-                        document.getElementById('detailAddress').textContent = 'No address information';
-                    }
+                        } else {
+                            document.getElementById('detailAddress').textContent = 'No address information';
+                        }
 
-                    // Load vehicles sold
-                    const vehiclesSoldTableBody = document.getElementById('vehiclesSoldTableBody');
-                    vehiclesSoldTableBody.innerHTML = '';
+                        // Load vehicles sold
+                        const vehiclesSoldTableBody = document.getElementById('vehiclesSoldTableBody');
+                        vehiclesSoldTableBody.innerHTML = '';
 
-                    if (seller.vehicles && seller.vehicles.length > 0) {
-                        seller.vehicles.forEach(vehicle => {
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
+                        console.log('Seller data:', seller);
+                        console.log('Vehicles data:', seller.vehicles);
+
+                        if (seller.vehicles && seller.vehicles.length > 0) {
+                            seller.vehicles.forEach(vehicle => {
+                                // Log the vehicle data to help debug
+                                console.log('Vehicle details:', vehicle);
+
+                                // Get vehicle details with fallbacks
+                                let vehicleInfo = '-';
+                                let manufacturerName = '-';
+                                let modelName = '-';
+
+                                if (vehicle.manufacturer && vehicle.manufacturer.name) {
+                                    manufacturerName = vehicle.manufacturer.name;
+                                }
+
+                                if (vehicle.model && vehicle.model.model_name) {
+                                    modelName = vehicle.model.model_name;
+                                } else if (vehicle.model && vehicle.model.name) {
+                                    modelName = vehicle.model.name;
+                                }
+
+                                if (vehicle.first_registration) {
+                                    const year = new Date(vehicle.first_registration).getFullYear();
+                                    vehicleInfo = `${year} ${manufacturerName} ${modelName}`;
+                                } else {
+                                    vehicleInfo = `${manufacturerName} ${modelName}`;
+                                }
+
+                                // Format price with fallbacks
+                                let price = '-';
+                                if (vehicle.purchase_price) {
+                                    price = `€${parseFloat(vehicle.purchase_price).toFixed(2)}`;
+                                }
+
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
                                 <td>${vehicle.vin}</td>
-                                <td>${vehicle.year} ${vehicle.manufacturer ? vehicle.manufacturer.name : ''} ${vehicle.model ? vehicle.model.name : ''}</td>
-                                <td>${vehicle.purchase_price ? `$${parseFloat(vehicle.purchase_price).toFixed(2)}` : '-'}</td>
-                                <td>${vehicle.status}</td>
+                                <td>${vehicleInfo}</td>
+                                <td>${vehicle.evaluation_date ? new Date(vehicle.evaluation_date).toLocaleDateString() : '-'}</td>
+                                <td>${price}</td>
+                                <td>${vehicle.status || '-'}</td>
                             `;
+                                vehiclesSoldTableBody.appendChild(row);
+                            });
+                        } else {
+                            const row = document.createElement('tr');
+                            row.innerHTML = '<td colspan="5" class="text-center">No vehicles sold</td>';
                             vehiclesSoldTableBody.appendChild(row);
-                        });
-                    } else {
-                        const row = document.createElement('tr');
-                        row.innerHTML = '<td colspan="5" class="text-center">No vehicles sold</td>';
-                        vehiclesSoldTableBody.appendChild(row);
-                    }
+                        }
 
-                    // Show the details view
-                    sellerDetails.style.display = 'block';
-                    sellerForm.style.display = 'none';
-                    showFormBtn.style.display = 'none';
-                })
-                .catch(error => {
-                    hideLoading();
-                    showError('Error loading seller details: ' + error.message);
-                    console.error('Error:', error);
-                });
+                        // Show the details view
+                        sellerDetails.style.display = 'block';
+                        sellerForm.style.display = 'none';
+                        showFormBtn.style.display = 'none';
+                    })
+                    .catch(error => {
+                        hideLoading();
+                        showError('Error loading seller details: ' + error.message);
+                        console.error('Error:', error);
+                    });
             }
 
             // Fetch seller details for editing
@@ -1208,54 +1273,54 @@
                 hideError();
 
                 fetch(`/api/sellers/${id}`, {
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch seller details');
-                    }
-                    return response.json();
-                })
-                .then(seller => {
-                    hideLoading();
-
-                    // Load dropdown options
-                    loadDropdownOptions();
-
-                    // Set form title and seller ID
-                    formTitle.textContent = `Edit Seller: ${seller.first_name} ${seller.last_name}`;
-                    sellerIdField.value = seller.seller_id;
-
-                    // Populate form fields
-                    firstNameField.value = seller.first_name;
-                    lastNameField.value = seller.last_name;
-                    genderField.value = seller.gender;
-                    phoneNumberField.value = seller.phone_number;
-                    emailField.value = seller.email;
-
-                    // Set dropdown values after a short delay to ensure they're loaded
-                    setTimeout(() => {
-                        if (seller.address_id) {
-                            addressIdField.value = seller.address_id;
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
                         }
-                        if (seller.customer_type_id) {
-                            customerTypeIdField.value = seller.customer_type_id;
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch seller details');
                         }
-                    }, 500);
+                        return response.json();
+                    })
+                    .then(seller => {
+                        hideLoading();
 
-                    // Show the form
-                    sellerForm.style.display = 'block';
-                    sellerDetails.style.display = 'none';
-                    showFormBtn.style.display = 'none';
-                })
-                .catch(error => {
-                    hideLoading();
-                    showError('Error loading seller details: ' + error.message);
-                    console.error('Error:', error);
-                });
+                        // Load dropdown options
+                        loadDropdownOptions();
+
+                        // Set form title and seller ID
+                        formTitle.textContent = `Edit Seller: ${seller.first_name} ${seller.last_name}`;
+                        sellerIdField.value = seller.seller_id;
+
+                        // Populate form fields
+                        firstNameField.value = seller.first_name;
+                        lastNameField.value = seller.last_name;
+                        genderField.value = seller.gender;
+                        phoneNumberField.value = seller.phone_number;
+                        emailField.value = seller.email;
+
+                        // Set dropdown values after a short delay to ensure they're loaded
+                        setTimeout(() => {
+                            if (seller.address_id) {
+                                addressIdField.value = seller.address_id;
+                            }
+                            if (seller.customer_type_id) {
+                                customerTypeIdField.value = seller.customer_type_id;
+                            }
+                        }, 500);
+
+                        // Show the form
+                        sellerForm.style.display = 'block';
+                        sellerDetails.style.display = 'none';
+                        showFormBtn.style.display = 'none';
+                    })
+                    .catch(error => {
+                        hideLoading();
+                        showError('Error loading seller details: ' + error.message);
+                        console.error('Error:', error);
+                    });
             }
 
             // Update an existing seller
@@ -1266,35 +1331,35 @@
                 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
                 fetch(`/api/sellers/${id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify(sellerData)
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(data => {
-                            throw new Error(data.message || 'Failed to update seller');
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    hideLoading();
-                    sellerForm.style.display = 'none';
-                    showFormBtn.style.display = 'block';
-                    showSuccess('Seller updated successfully!');
-                    fetchSellers();
-                })
-                .catch(error => {
-                    hideLoading();
-                    showError('Error updating seller: ' + error.message);
-                    console.error('Error:', error);
-                });
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify(sellerData)
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(data => {
+                                throw new Error(data.message || 'Failed to update seller');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        hideLoading();
+                        sellerForm.style.display = 'none';
+                        showFormBtn.style.display = 'block';
+                        showSuccess('Seller updated successfully!');
+                        fetchSellers();
+                    })
+                    .catch(error => {
+                        hideLoading();
+                        showError('Error updating seller: ' + error.message);
+                        console.error('Error:', error);
+                    });
             }
 
             // Delete a seller
@@ -1309,31 +1374,31 @@
                 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
                 fetch(`/api/sellers/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken,
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(data => {
-                            throw new Error(data.message || 'Failed to delete seller');
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    hideLoading();
-                    showSuccess('Seller deleted successfully!');
-                    fetchSellers();
-                })
-                .catch(error => {
-                    hideLoading();
-                    showError('Error deleting seller: ' + error.message);
-                    console.error('Error:', error);
-                });
+                        method: 'DELETE',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(data => {
+                                throw new Error(data.message || 'Failed to delete seller');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        hideLoading();
+                        showSuccess('Seller deleted successfully!');
+                        fetchSellers();
+                    })
+                    .catch(error => {
+                        hideLoading();
+                        showError('Error deleting seller: ' + error.message);
+                        console.error('Error:', error);
+                    });
             }
 
             // Initial load
@@ -1341,4 +1406,5 @@
         });
     </script>
 </body>
+
 </html>

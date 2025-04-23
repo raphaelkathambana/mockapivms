@@ -561,18 +561,64 @@
                         if (contract.vehicle) {
                             document.getElementById('detailVin').textContent = contract.vehicle.vin;
 
-                            // Get vehicle details
-                            const manufacturerName = contract.vehicle.manufacturer ? contract.vehicle
-                                .manufacturer.name : '-';
-                            const modelName = contract.vehicle.model ? contract.vehicle.model.model_name : '-';
-                            const year = contract.vehicle.first_registration ? new Date(contract.vehicle
+                            // Check if we have manufacturer and model data
+                            let manufacturerName = contract.vehicle.manufacturer ? contract.vehicle.manufacturer
+                                .name : '-';
+                            let modelName = contract.vehicle.model ? contract.vehicle.model.model_name : '-';
+                            let year = contract.vehicle.first_registration ? new Date(contract.vehicle
                                 .first_registration).getFullYear() : '';
 
-                            document.getElementById('detailVehicle').textContent =
-                                `${year} ${manufacturerName} ${modelName}`;
-                            document.getElementById('detailPrice').textContent = contract.vehicle
-                                .selling_price ? `€${parseFloat(contract.vehicle.selling_price).toFixed(2)}` :
-                                '-';
+                            // If we don't have manufacturer or model data, fetch the vehicle details
+                            if (manufacturerName === '-' || modelName === '-') {
+                                // Show loading state
+                                document.getElementById('detailVehicle').textContent =
+                                    'Loading vehicle details...';
+                                document.getElementById('detailPrice').textContent = 'Loading...';
+
+                                fetch(`/api/vehicles/${contract.vehicle.vin}`, {
+                                        headers: {
+                                            'Accept': 'application/json',
+                                            'X-Requested-With': 'XMLHttpRequest'
+                                        }
+                                    })
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error(
+                                                `Failed to fetch vehicle details for ${contract.vehicle.vin}`
+                                                );
+                                        }
+                                        return response.json();
+                                    })
+                                    .then(vehicleData => {
+                                        console.log('Detailed vehicle data:', vehicleData);
+
+                                        // Update with the fetched data
+                                        manufacturerName = vehicleData.manufacturer ? vehicleData
+                                            .manufacturer.name : '-';
+                                        modelName = vehicleData.model ? vehicleData.model.model_name : '-';
+                                        year = vehicleData.first_registration ? new Date(vehicleData
+                                            .first_registration).getFullYear() : '';
+
+                                        document.getElementById('detailVehicle').textContent =
+                                            `${year} ${manufacturerName} ${modelName}`;
+                                        document.getElementById('detailPrice').textContent = vehicleData
+                                            .selling_price ?
+                                            `€${parseFloat(vehicleData.selling_price).toFixed(2)}` : '-';
+                                    })
+                                    .catch(error => {
+                                        console.error('Error fetching vehicle details:', error);
+                                        document.getElementById('detailVehicle').textContent =
+                                            'Error loading vehicle details';
+                                        document.getElementById('detailPrice').textContent = '-';
+                                    });
+                            } else {
+                                // We already have the data, display it
+                                document.getElementById('detailVehicle').textContent =
+                                    `${year} ${manufacturerName} ${modelName}`;
+                                document.getElementById('detailPrice').textContent = contract.vehicle
+                                    .selling_price ?
+                                    `€${parseFloat(contract.vehicle.selling_price).toFixed(2)}` : '-';
+                            }
                         } else {
                             document.getElementById('detailVin').textContent = '-';
                             document.getElementById('detailVehicle').textContent = '-';

@@ -481,13 +481,13 @@
 
                 async fetchEmployees() {
                     this.viewMode = 'list';
-                    await this.makeRequest('GET', '/employees');
+                    await this.makeRequest('GET', '/api/employees');
                 },
 
                 async showEmployee(id) {
                     this.viewMode = 'detail';
                     this.activeTab = 'basic';
-                    await this.makeRequest('GET', `/employees/${id}`);
+                    await this.makeRequest('GET', `/api/employees/${id}`);
                 },
 
                 selectEmployee(employee) {
@@ -507,7 +507,7 @@
                 },
 
                 async createEmployee() {
-                    await this.makeRequest('POST', '/employees', this.employeeForm);
+                    await this.makeRequest('POST', '/api/employees', this.employeeForm);
                     if (!this.error) {
                         this.showEmployeeForm = false;
                         this.resetEmployeeForm();
@@ -516,7 +516,7 @@
                 },
 
                 async updateEmployee() {
-                    await this.makeRequest('PUT', `/employees/${this.selectedEmployee.employee_id}`, this.employeeForm);
+                    await this.makeRequest('PUT', `/api/employees/${this.selectedEmployee.employee_id}`, this.employeeForm);
                     if (!this.error) {
                         this.showEmployeeForm = false;
 
@@ -534,7 +534,7 @@
                 },
 
                 async deleteEmployee() {
-                    await this.makeRequest('DELETE', `/employees/${this.employeeToDeleteId}`);
+                    await this.makeRequest('DELETE', `/api/employees/${this.employeeToDeleteId}`);
                     this.showDeleteConfirm = false;
                     this.employeeToDeleteId = null;
 
