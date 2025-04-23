@@ -73,3 +73,8 @@ Route::get('/vehicle-registrations', function () {
 Route::get('/additional-equipment', function () {
     return view('additional-equipment-visualizer');
 });
+
+// VMS Jobs Visualizer
+Route::get('/vms-jobs', function () {
+    return view('vms-jobs');
+});
