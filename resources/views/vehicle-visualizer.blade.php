@@ -716,7 +716,7 @@
                     return;
                 }
 
-                fetch(`/api/manufacturers/${manufacturerId}/models`, {
+                fetch(`/api/vehicle-models/by-manufacturer/${manufacturerId}`, {
                         headers: {
                             'Accept': 'application/json',
                             'X-Requested-With': 'XMLHttpRequest'

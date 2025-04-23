@@ -52,7 +52,7 @@ Route::get('blacklists/check/{name}/{identification}', [BlacklistController::cla
 
 // Vehicle Model API
 Route::apiResource('vehicle-models', VehicleModelController::class);
-Route::get('vehicle-models/by-manufacturer/{manufacturer_id}', [VehicleModelController::class, 'getByManufacturer']);
+Route::get('vehicle-models/by-manufacturer/{manufacturer_id}', [VehicleModelController::class, 'getModelsByManufacturer']);
 
 // Buyer API
 Route::apiResource('buyers', BuyerController::class);
