@@ -29,12 +29,14 @@ class DatabaseSeeder extends Seeder
             VehicleSeeder::class,
             EngineSpecificationSeeder::class,
             PurchaseContractSeeder::class,
+            ProcurementContractSeeder::class,
             VehicleRegistrationSeeder::class,
             DamageRecordSeeder::class,
             TireSeeder::class,
             InspectionRecordSeeder::class,
             AdditionalEquipmentSeeder::class,
             SalesLogSeeder::class,
+            PurchaseLogSeeder::class,
             BlacklistSeeder::class,
         ]);
     }
