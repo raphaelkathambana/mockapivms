@@ -74,6 +74,11 @@ Route::get('/additional-equipment', function () {
     return view('additional-equipment-visualizer');
 });
 
+// Procurement Contract Visualizer
+Route::get('/procurement-contracts', function () {
+    return view('procurement-contract-visualizer');
+});
+
 // VMS Jobs Visualizer
 Route::get('/vms-jobs', function () {
     return view('vms-jobs');

@@ -95,6 +95,11 @@ class Vehicle extends Model
         return $this->hasOne(PurchaseContract::class, 'vin');
     }
 
+    public function procurementContract(): HasOne
+    {
+        return $this->hasOne(ProcurementContract::class, 'vin');
+    }
+
     public function vehicleRegistration(): HasOne
     {
         return $this->hasOne(VehicleRegistration::class, 'vin');
@@ -128,5 +133,10 @@ class Vehicle extends Model
     public function salesLogs(): HasMany
     {
         return $this->hasMany(SalesLog::class, 'vin');
+    }
+
+    public function purchaseLogs(): HasMany
+    {
+        return $this->hasMany(PurchaseLog::class, 'vin');
     }
 }

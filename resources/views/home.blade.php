@@ -126,6 +126,22 @@
                         </div>
                     </a>
 
+                    <!-- Procurement Contract Model Card -->
+                    <a href="{{ url('/procurement-contracts') }}" class="block">
+                        <div
+                            class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors duration-200 hover:border-blue-500">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-medium text-blue-600">Procurement Contracts</h3>
+                                <span
+                                    class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">Model</span>
+                            </div>
+                            <p class="text-gray-600 mt-2 text-sm">Manage vehicle procurement contracts</p>
+                            <div class="mt-4 flex justify-end">
+                                <span class="text-blue-600 text-sm">View Model →</span>
+                            </div>
+                        </div>
+                    </a>
+
                     <!-- Vehicle Registration Model Card -->
                     <a href="{{ url('/vehicle-registrations') }}" class="block">
                         <div

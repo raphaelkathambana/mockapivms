@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ProcurementContractController;
+use App\Http\Controllers\PurchaseLogController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ItemController;
@@ -113,3 +115,16 @@ Route::get('sales-logs/by-employee/{employee_id}', [SalesLogController::class, '
 // Employee API
 Route::apiResource('employees', EmployeeController::class);
 Route::get('employees/active', [EmployeeController::class, 'getActiveEmployees']);
+
+Route::apiResource('procurement-contracts', ProcurementContractController::class);
+Route::get('procurement-contracts/by-seller/{seller_id}', [ProcurementContractController::class, 'getBySeller']);
+Route::get('procurement-contracts/by-vehicle/{vin}', [ProcurementContractController::class, 'getByVehicle']);
+Route::get('procurement-contracts/by-employee/{employee_id}', [ProcurementContractController::class, 'getByEmployee']);
+Route::get('procurement-contracts-related-data', [ProcurementContractController::class, 'getRelatedData']);
+
+// Purchase Log API
+Route::apiResource('purchase-logs', PurchaseLogController::class);
+Route::get('purchase-logs/by-vehicle/{vin}', [PurchaseLogController::class, 'getByVehicle']);
+Route::get('purchase-logs/by-seller/{seller_id}', [PurchaseLogController::class, 'getBySeller']);
+Route::get('purchase-logs/by-employee/{employee_id}', [PurchaseLogController::class, 'getByEmployee']);
+Route::get('purchase-logs-related-data', [PurchaseLogController::class, 'getRelatedData']);
