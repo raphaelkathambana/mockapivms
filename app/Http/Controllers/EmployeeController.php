@@ -54,7 +54,14 @@ class EmployeeController extends Controller
      */
     public function show(int $id)
     {
-        $employee = Employee::with(['salesLogs', 'purchaseContracts'])->findOrFail($id);
+        $employee = Employee::with([
+            'purchaseContracts.vehicle.manufacturer',
+            'purchaseContracts.vehicle.model',
+            'purchaseContracts.buyer',
+            'procurementContracts.vehicle.manufacturer',
+            'procurementContracts.vehicle.model',
+            'procurementContracts.seller'
+        ])->findOrFail($id);
         return response()->json($employee);
     }
 

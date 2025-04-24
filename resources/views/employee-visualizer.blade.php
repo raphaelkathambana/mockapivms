@@ -5,591 +5,672 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Employee Model Visualizer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Employee Visualizer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-        [x-cloak] {
-            display: none !important;
+        .container {
+            margin-top: 20px;
         }
 
-        .tab-active {
-            border-bottom: 2px solid #3b82f6;
-            color: #3b82f6;
+        .card {
+            margin-bottom: 20px;
+        }
+
+        #employeeForm,
+        #employeeDetails {
+            display: none;
+        }
+
+        .loading {
+            display: none;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .success-message {
+            color: green;
+            margin-top: 10px;
+        }
+
+        .tab-content {
+            padding: 20px 0;
         }
     </style>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 
-<body class="bg-gray-100">
-    <div class="container mx-auto p-4" x-data="employeeVisualizer()">
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold">Employee Model Visualizer</h1>
-            <a href="{{ url('/') }}" class="text-blue-600 hover:text-blue-800">← Back to Home</a>
+<body>
+    <div class="container">
+        <h1>Employee Visualizer</h1>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <button id="showFormBtn" class="btn btn-primary">Add New Employee</button>
+                <a href="/" class="btn btn-secondary">Back to Home</a>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="input-group">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search employees...">
+                    <button class="btn btn-outline-secondary" type="button" id="searchBtn">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <div class="flex flex-col md:flex-row gap-6">
-            <!-- Left side - API Buttons -->
-            <div class="w-full md:w-1/3 bg-white p-4 rounded-lg shadow">
-                <h2 class="text-lg font-semibold mb-4">Employee Actions</h2>
+        <!-- Employee Form -->
+        <div class="card" id="employeeForm">
+            <div class="card-header">
+                <h5 id="formTitle">Add New Employee</h5>
+            </div>
+            <div class="card-body">
+                <form id="employeeDataForm">
+                    <input type="hidden" id="employeeId">
 
-                <div class="space-y-3">
-                    <div>
-                        <h3 class="font-medium mb-2">Employees</h3>
-                        <button @click="fetchEmployees()"
-                            class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded mb-2 flex justify-between items-center">
-                            <span>GET /employees</span>
-                            <span class="text-xs bg-green-800 px-2 py-1 rounded">GET</span>
-                        </button>
-
-                        <button @click="showCreateEmployeeForm = true; formMode = 'create'"
-                            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded mb-2 flex justify-between items-center">
-                            <span>Create New Employee</span>
-                            <span class="text-xs bg-blue-800 px-2 py-1 rounded">POST</span>
-                        </button>
-                    </div>
-
-                    <div x-show="selectedEmployee" x-cloak>
-                        <h3 class="font-medium mb-2">Selected Employee: <span
-                                x-text="selectedEmployee?.first_name + ' ' + selectedEmployee?.last_name"></span></h3>
-                        <div class="space-y-2">
-                            <button @click="showEmployee(selectedEmployee.employee_id)"
-                                class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded flex justify-between items-center">
-                                <span>GET /employees/<span x-text="selectedEmployee.employee_id"></span></span>
-                                <span class="text-xs bg-green-800 px-2 py-1 rounded">GET</span>
-                            </button>
-
-                            <button @click="showEditEmployeeForm(selectedEmployee)"
-                                class="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded flex justify-between items-center">
-                                <span>Edit Employee</span>
-                                <span class="text-xs bg-yellow-800 px-2 py-1 rounded">PUT</span>
-                            </button>
-
-                            <button @click="confirmDeleteEmployee(selectedEmployee.employee_id)"
-                                class="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded flex justify-between items-center">
-                                <span>Delete Employee</span>
-                                <span class="text-xs bg-red-800 px-2 py-1 rounded">DELETE</span>
-                            </button>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="first_name" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="first_name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="last_name" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="last_name" required>
                         </div>
                     </div>
 
-                    <!-- Delete Confirmation -->
-                    <div x-show="showDeleteConfirm" x-cloak class="bg-red-50 border border-red-200 rounded p-3">
-                        <p class="text-red-700 mb-2">Are you sure you want to delete this employee?</p>
-                        <p class="text-red-700 mb-2 text-sm">This action cannot be undone. Employees with related
-                            records cannot be deleted.</p>
-                        <div class="flex gap-2">
-                            <button @click="deleteEmployee()"
-                                class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded">
-                                Delete
-                            </button>
-                            <button @click="showDeleteConfirm = false"
-                                class="bg-gray-500 hover:bg-gray-600 text-white py-1 px-3 rounded">
-                                Cancel
-                            </button>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="role" class="form-label">Role</label>
+                            <select class="form-select" id="role" required>
+                                <option value="">Select Role</option>
+                                <option value="Sales Manager">Sales Manager</option>
+                                <option value="Sales Representative">Sales Representative</option>
+                                <option value="Finance Manager">Finance Manager</option>
+                                <option value="Customer Service">Customer Service</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="phone_number" class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" id="phone_number" required>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-success">Save Employee</button>
+                        <button type="button" id="cancelBtn" class="btn btn-secondary">Cancel</button>
+                    </div>
+                    <div class="loading mt-3">Saving employee data...</div>
+                    <div class="error-message"></div>
+                    <div class="success-message"></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Employee Details -->
+        <div class="card" id="employeeDetails">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Employee Details</h5>
+                <div>
+                    <button id="editEmployeeBtn" class="btn btn-sm btn-primary">Edit</button>
+                    <button id="backToListBtn" class="btn btn-sm btn-secondary">Back to List</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="loading">Loading employee details...</div>
+                <div class="error-message"></div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <h4 id="detailName">Employee Details</h4>
+                        <p><strong>Role:</strong> <span id="detailRole"></span></p>
+                        <p><strong>Email:</strong> <span id="detailEmail"></span></p>
+                        <p><strong>Phone Number:</strong> <span id="detailPhoneNumber"></span></p>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <h4>Sales History</h4>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Contract ID</th>
+                                        <th>Type</th>
+                                        <th>Vehicle</th>
+                                        <th>Customer</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="salesHistoryTableBody">
+                                    <!-- Sales history will be loaded here -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Right side - Results -->
-            <div class="w-full md:w-2/3">
-                <!-- Employee Form -->
-                <div x-show="showEmployeeForm" x-cloak class="bg-white p-4 rounded-lg shadow mb-4">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-lg font-semibold"
-                            x-text="formMode === 'create' ? 'Create New Employee' : 'Edit Employee'"></h2>
-                        <button @click="showEmployeeForm = false" class="text-gray-500 hover:text-gray-700">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-
-                    <form @submit.prevent="formMode === 'create' ? createEmployee() : updateEmployee()">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- First Name -->
-                            <div class="col-span-1">
-                                <label class="block text-sm font-medium mb-1">First Name</label>
-                                <input type="text" x-model="employeeForm.first_name"
-                                    class="w-full border rounded px-3 py-2" required>
-                            </div>
-
-                            <!-- Last Name -->
-                            <div class="col-span-1">
-                                <label class="block text-sm font-medium mb-1">Last Name</label>
-                                <input type="text" x-model="employeeForm.last_name"
-                                    class="w-full border rounded px-3 py-2" required>
-                            </div>
-
-                            <!-- Role -->
-                            <div class="col-span-1">
-                                <label class="block text-sm font-medium mb-1">Role</label>
-                                <input type="text" x-model="employeeForm.role"
-                                    class="w-full border rounded px-3 py-2" required>
-                            </div>
-
-                            <!-- Email -->
-                            <div class="col-span-1">
-                                <label class="block text-sm font-medium mb-1">Email</label>
-                                <input type="email" x-model="employeeForm.email"
-                                    class="w-full border rounded px-3 py-2" required>
-                            </div>
-
-                            <!-- Phone Number -->
-                            <div class="col-span-1">
-                                <label class="block text-sm font-medium mb-1">Phone Number</label>
-                                <input type="text" x-model="employeeForm.phone_number"
-                                    class="w-full border rounded px-3 py-2" required>
-                            </div>
-                        </div>
-
-                        <div class="mt-4 flex gap-2">
-                            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded">
-                                <span x-text="formMode === 'create' ? 'Create Employee' : 'Update Employee'"></span>
-                            </button>
-                            <button type="button" @click="showEmployeeForm = false"
-                                class="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded">
-                                Cancel
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Results display area -->
-                <div x-show="!showEmployeeForm" class="bg-white p-4 rounded-lg shadow">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-lg font-semibold">Results</h2>
-                        <div class="flex items-center gap-2">
-                            <span x-show="loading" class="text-sm text-gray-500">Loading...</span>
-                            <span x-show="lastRequestTime" class="text-xs text-gray-500"
-                                x-text="'Last request: ' + lastRequestTime">
-                            </span>
-                        </div>
-                    </div>
-
-                    <div x-show="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                        <strong class="font-bold">Error!</strong>
-                        <span x-text="error"></span>
-                    </div>
-
-                    <!-- Employee Detail View -->
-                    <div x-show="viewMode === 'detail' && !Array.isArray(responseData)"
-                        class="border rounded-lg overflow-hidden">
-                        <div class="bg-gray-100 px-4 py-2 border-b flex justify-between items-center">
-                            <div class="font-medium" x-text="currentEndpoint || 'No request made'"></div>
-                            <div class="text-sm" x-show="responseStatus">
-                                Status: <span x-text="responseStatus"
-                                    :class="{
-                                        'text-green-600': responseStatus >= 200 && responseStatus < 300,
-                                        'text-yellow-600': responseStatus >= 300 && responseStatus < 400,
-                                        'text-red-600': responseStatus >= 400
-                                    }">
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="p-4">
-                            <!-- Tabs for employee details -->
-                            <div class="border-b mb-4">
-                                <ul class="flex flex-wrap -mb-px">
-                                    <li class="mr-2">
-                                        <a href="#" @click.prevent="activeTab = 'basic'"
-                                            :class="{ 'tab-active': activeTab === 'basic' }"
-                                            class="inline-block p-2 font-medium">
-                                            Basic Info
-                                        </a>
-                                    </li>
-                                    <li class="mr-2">
-                                        <a href="#" @click.prevent="activeTab = 'contracts'"
-                                            :class="{ 'tab-active': activeTab === 'contracts' }"
-                                            class="inline-block p-2 font-medium">
-                                            Contracts
-                                        </a>
-                                    </li>
-                                    <li class="mr-2">
-                                        <a href="#" @click.prevent="activeTab = 'logs'"
-                                            :class="{ 'tab-active': activeTab === 'logs' }"
-                                            class="inline-block p-2 font-medium">
-                                            Sales Logs
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <!-- Basic Info Tab -->
-                            <div x-show="activeTab === 'basic'" class="space-y-4">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div class="border rounded p-3">
-                                        <h3 class="font-medium mb-2">Employee Information</h3>
-                                        <div class="space-y-2">
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-600">Employee ID:</span>
-                                                <span class="font-medium" x-text="responseData.employee_id"></span>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-600">Full Name:</span>
-                                                <span class="font-medium"
-                                                    x-text="responseData.first_name + ' ' + responseData.last_name"></span>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-600">Role:</span>
-                                                <span class="font-medium" x-text="responseData.role"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="border rounded p-3">
-                                        <h3 class="font-medium mb-2">Contact Information</h3>
-                                        <div class="space-y-2">
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-600">Email:</span>
-                                                <span class="font-medium" x-text="responseData.email"></span>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <span class="text-gray-600">Phone:</span>
-                                                <span class="font-medium" x-text="responseData.phone_number"></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Contracts Tab -->
-                            <div x-show="activeTab === 'contracts'" class="space-y-4">
-                                <div
-                                    x-show="responseData.purchaseContracts && responseData.purchaseContracts.length > 0">
-                                    <h3 class="font-medium mb-2">Purchase Contracts</h3>
-                                    <div class="overflow-x-auto">
-                                        <table class="min-w-full divide-y divide-gray-200">
-                                            <thead class="bg-gray-50">
-                                                <tr>
-                                                    <th
-                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Contract ID</th>
-                                                    <th
-                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Vehicle VIN</th>
-                                                    <th
-                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Customer</th>
-                                                    <th
-                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Contract Date</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="bg-white divide-y divide-gray-200">
-                                                <template x-for="contract in responseData.purchaseContracts"
-                                                    :key="contract.contract_id">
-                                                    <tr>
-                                                        <td class="px-6 py-4 whitespace-nowrap text-sm"
-                                                            x-text="contract.contract_id"></td>
-                                                        <td class="px-6 py-4 whitespace-nowrap text-sm"
-                                                            x-text="contract.vin"></td>
-                                                        <td class="px-6 py-4 whitespace-nowrap text-sm"
-                                                            x-text="contract.buyer ? contract.buyer.first_name + ' ' + contract.buyer.last_name : 'N/A'">
-                                                        </td>
-                                                        <td class="px-6 py-4 whitespace-nowrap text-sm"
-                                                            x-text="contract.contract_date"></td>
-                                                    </tr>
-                                                </template>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div x-show="!responseData.purchaseContracts || responseData.purchaseContracts.length === 0"
-                                    class="text-gray-500 italic">
-                                    No purchase contracts for this employee.
-                                </div>
-                            </div>
-
-                            <!-- Sales Logs Tab -->
-                            <div x-show="activeTab === 'logs'" class="space-y-4">
-                                <div x-show="responseData.salesLogs && responseData.salesLogs.length > 0">
-                                    <h3 class="font-medium mb-2">Sales Activity Logs</h3>
-                                    <div class="overflow-x-auto">
-                                        <table class="min-w-full divide-y divide-gray-200">
-                                            <thead class="bg-gray-50">
-                                                <tr>
-                                                    <th
-                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Timestamp</th>
-                                                    <th
-                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Vehicle VIN</th>
-                                                    <th
-                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Customer</th>
-                                                    <th
-                                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                        Status Change</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="bg-white divide-y divide-gray-200">
-                                                <template x-for="log in responseData.salesLogs" :key="log.log_id">
-                                                    <tr>
-                                                        <td class="px-6 py-4 whitespace-nowrap text-sm"
-                                                            x-text="log.timestamp"></td>
-                                                        <td class="px-6 py-4 whitespace-nowrap text-sm"
-                                                            x-text="log.vin"></td>
-                                                        <td class="px-6 py-4 whitespace-nowrap text-sm"
-                                                            x-text="log.customer_number"></td>
-                                                        <td class="px-6 py-4 text-sm" x-text="log.status_change"></td>
-                                                    </tr>
-                                                </template>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div x-show="!responseData.salesLogs || responseData.salesLogs.length === 0"
-                                    class="text-gray-500 italic">
-                                    No sales activity logs for this employee.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Employee List View -->
-                    <div x-show="viewMode === 'list' && Array.isArray(responseData) && responseData.length > 0"
-                        class="border rounded-lg overflow-hidden">
-                        <div class="bg-gray-100 px-4 py-2 border-b flex justify-between items-center">
-                            <div class="font-medium" x-text="currentEndpoint || 'No request made'"></div>
-                            <div class="text-sm" x-show="responseStatus">
-                                Status: <span x-text="responseStatus"
-                                    :class="{
-                                        'text-green-600': responseStatus >= 200 && responseStatus < 300,
-                                        'text-yellow-600': responseStatus >= 300 && responseStatus < 400,
-                                        'text-red-600': responseStatus >= 400
-                                    }">
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="p-4">
-                            <h3 class="font-medium mb-2" x-text="`${responseData.length} employees found`"></h3>
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th
-                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                ID</th>
-                                            <th
-                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Name</th>
-                                            <th
-                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Role</th>
-                                            <th
-                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Email</th>
-                                            <th
-                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Phone</th>
-                                            <th
-                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200">
-                                        <template x-for="employee in responseData" :key="employee.employee_id">
-                                            <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm"
-                                                    x-text="employee.employee_id"></td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm"
-                                                    x-text="employee.first_name + ' ' + employee.last_name"></td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm"
-                                                    x-text="employee.role"></td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm"
-                                                    x-text="employee.email"></td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm"
-                                                    x-text="employee.phone_number"></td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                                    <button @click="selectEmployee(employee)"
-                                                        class="text-indigo-600 hover:text-indigo-900 mr-2">
-                                                        Select
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        </template>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div x-show="!responseData && !loading && !error" class="text-gray-500 italic p-4">
-                        No data to display. Use the buttons on the left to make API requests.
-                    </div>
-
-                    <div x-show="Array.isArray(responseData) && responseData.length === 0"
-                        class="text-gray-500 italic p-4">
-                        No employees found in the database.
-                    </div>
+        <!-- Employees List -->
+        <div class="card">
+            <div class="card-header">
+                <h5>Employees List</h5>
+            </div>
+            <div class="card-body">
+                <div class="loading">Loading employees...</div>
+                <div class="error-message"></div>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeesTableBody">
+                            <!-- Employees will be loaded here -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function employeeVisualizer() {
-            return {
-                baseUrl: window.location.origin,
-                responseData: null,
-                responseStatus: null,
-                currentEndpoint: '',
-                error: null,
-                loading: false,
-                lastRequestTime: '',
-                selectedEmployee: null,
-                employeeToDeleteId: null,
-                showEmployeeForm: false,
-                formMode: 'create', // 'create' or 'edit'
-                showDeleteConfirm: false,
-                viewMode: 'list', // 'list' or 'detail'
-                activeTab: 'basic',
-                employeeForm: {
-                    first_name: '',
-                    last_name: '',
-                    role: '',
-                    email: '',
-                    phone_number: ''
-                },
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const employeesTableBody = document.getElementById('employeesTableBody');
+            const employeeForm = document.getElementById('employeeForm');
+            const employeeDetails = document.getElementById('employeeDetails');
+            const employeeDataForm = document.getElementById('employeeDataForm');
+            const showFormBtn = document.getElementById('showFormBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const formTitle = document.getElementById('formTitle');
+            const backToListBtn = document.getElementById('backToListBtn');
+            const editEmployeeBtn = document.getElementById('editEmployeeBtn');
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
 
-                get showCreateEmployeeForm() {
-                    return this.showEmployeeForm && this.formMode === 'create';
-                },
+            // Form fields
+            const employeeIdField = document.getElementById('employeeId');
+            const firstNameField = document.getElementById('first_name');
+            const lastNameField = document.getElementById('last_name');
+            const roleField = document.getElementById('role');
+            const emailField = document.getElementById('email');
+            const phoneNumberField = document.getElementById('phone_number');
 
-                set showCreateEmployeeForm(value) {
-                    this.showEmployeeForm = value;
-                    if (value) {
-                        this.formMode = 'create';
-                        this.resetEmployeeForm();
-                    }
-                },
+            // UI elements
+            const loadingElements = document.querySelectorAll('.loading');
+            const errorElements = document.querySelectorAll('.error-message');
+            const successElements = document.querySelectorAll('.success-message');
 
-                resetEmployeeForm() {
-                    this.employeeForm = {
-                        first_name: '',
-                        last_name: '',
-                        role: '',
-                        email: '',
-                        phone_number: ''
-                    };
-                },
+            // Show/hide UI elements
+            function showLoading() {
+                loadingElements.forEach(el => el.style.display = 'block');
+            }
 
-                async fetchEmployees() {
-                    this.viewMode = 'list';
-                    await this.makeRequest('GET', '/api/employees');
-                },
+            function hideLoading() {
+                loadingElements.forEach(el => el.style.display = 'none');
+            }
 
-                async showEmployee(id) {
-                    this.viewMode = 'detail';
-                    this.activeTab = 'basic';
-                    await this.makeRequest('GET', `/api/employees/${id}`);
-                },
+            function showError(message) {
+                errorElements.forEach(el => {
+                    el.textContent = message;
+                    el.style.display = 'block';
+                });
+            }
 
-                selectEmployee(employee) {
-                    this.selectedEmployee = employee;
-                },
+            function hideError() {
+                errorElements.forEach(el => {
+                    el.textContent = '';
+                    el.style.display = 'none';
+                });
+            }
 
-                showEditEmployeeForm(employee) {
-                    this.formMode = 'edit';
-                    this.employeeForm = {
-                        first_name: employee.first_name,
-                        last_name: employee.last_name,
-                        role: employee.role,
-                        email: employee.email,
-                        phone_number: employee.phone_number
-                    };
-                    this.showEmployeeForm = true;
-                },
+            function showSuccess(message) {
+                successElements.forEach(el => {
+                    el.textContent = message;
+                    el.style.display = 'block';
+                });
 
-                async createEmployee() {
-                    await this.makeRequest('POST', '/api/employees', this.employeeForm);
-                    if (!this.error) {
-                        this.showEmployeeForm = false;
-                        this.resetEmployeeForm();
-                        await this.fetchEmployees();
-                    }
-                },
+                // Hide success message after 3 seconds
+                setTimeout(() => {
+                    successElements.forEach(el => {
+                        el.style.display = 'none';
+                    });
+                }, 3000);
+            }
 
-                async updateEmployee() {
-                    await this.makeRequest('PUT', `/api/employees/${this.selectedEmployee.employee_id}`, this.employeeForm);
-                    if (!this.error) {
-                        this.showEmployeeForm = false;
+            // Fetch all employees
+            function fetchEmployees(searchTerm = '') {
+                showLoading();
+                hideError();
 
-                        // Refresh the employees list and the selected employee
-                        await this.fetchEmployees();
-                        if (this.selectedEmployee) {
-                            await this.showEmployee(this.selectedEmployee.employee_id);
-                        }
-                    }
-                },
-
-                confirmDeleteEmployee(id) {
-                    this.employeeToDeleteId = id;
-                    this.showDeleteConfirm = true;
-                },
-
-                async deleteEmployee() {
-                    await this.makeRequest('DELETE', `/api/employees/${this.employeeToDeleteId}`);
-                    this.showDeleteConfirm = false;
-                    this.employeeToDeleteId = null;
-
-                    // Refresh the employees list and clear selection
-                    if (!this.error) {
-                        this.selectedEmployee = null;
-                        await this.fetchEmployees();
-                    }
-                },
-
-                async makeRequest(method, endpoint, data = null) {
-                    this.loading = true;
-                    this.error = null;
-                    this.currentEndpoint = `${method} ${endpoint}`;
-
-                    try {
-                        const options = {
-                            method: method,
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                    'content')
-                            },
-                            credentials: 'include'
-                        };
-
-                        if (data) {
-                            options.body = JSON.stringify(data);
-                        }
-
-                        const response = await fetch(this.baseUrl + endpoint, options);
-                        this.responseStatus = response.status;
-
-                        // Update timestamp
-                        const now = new Date();
-                        this.lastRequestTime = now.toLocaleTimeString();
-
-                        if (!response.ok) {
-                            const errorData = await response.json().catch(() => null);
-                            throw new Error(errorData?.message || errorData?.error ||
-                                `Request failed with status ${response.status}`);
-                        }
-
-                        this.responseData = await response.json();
-                    } catch (err) {
-                        this.error = err.message;
-                        console.error('API request error:', err);
-                    } finally {
-                        this.loading = false;
-                    }
+                let url = '/api/employees';
+                if (searchTerm) {
+                    url += `?search=${encodeURIComponent(searchTerm)}`;
                 }
-            };
-        }
+
+                fetch(url, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch employees');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        hideLoading();
+                        renderEmployees(data);
+                    })
+                    .catch(error => {
+                        hideLoading();
+                        showError('Error loading employees: ' + error.message);
+                        console.error('Error:', error);
+                    });
+            }
+
+            // Render employees in the table
+            function renderEmployees(employees) {
+                employeesTableBody.innerHTML = '';
+
+                if (employees.length === 0) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = '<td colspan="6" class="text-center">No employees found</td>';
+                    employeesTableBody.appendChild(row);
+                    return;
+                }
+
+                employees.forEach(employee => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${employee.employee_id}</td>
+                        <td>${employee.first_name} ${employee.last_name}</td>
+                        <td>${employee.role}</td>
+                        <td>${employee.email}</td>
+                        <td>${employee.phone_number}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info view-btn" data-id="${employee.employee_id}">View</button>
+                            <button class="btn btn-sm btn-primary edit-btn" data-id="${employee.employee_id}">Edit</button>
+                            <button class="btn btn-sm btn-danger delete-btn" data-id="${employee.employee_id}">Delete</button>
+                        </td>
+                    `;
+                    employeesTableBody.appendChild(row);
+                });
+
+                // Add event listeners to buttons
+                document.querySelectorAll('.view-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        viewEmployee(id);
+                    });
+                });
+
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        editEmployee(id);
+                    });
+                });
+
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        deleteEmployee(id);
+                    });
+                });
+            }
+
+            // Show form for adding a new employee
+            showFormBtn.addEventListener('click', function() {
+                formTitle.textContent = 'Add New Employee';
+                employeeIdField.value = '';
+                employeeDataForm.reset();
+                employeeForm.style.display = 'block';
+                employeeDetails.style.display = 'none';
+                showFormBtn.style.display = 'none';
+            });
+
+            // Hide form
+            cancelBtn.addEventListener('click', function() {
+                employeeForm.style.display = 'none';
+                showFormBtn.style.display = 'block';
+                hideError();
+            });
+
+            // Back to list from details view
+            backToListBtn.addEventListener('click', function() {
+                employeeDetails.style.display = 'none';
+                showFormBtn.style.display = 'block';
+            });
+
+            // Edit from details view
+            editEmployeeBtn.addEventListener('click', function() {
+                const id = employeeIdField.value;
+                editEmployee(id);
+            });
+
+            // Handle form submission
+            employeeDataForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const employeeId = employeeIdField.value;
+                const employeeData = {
+                    first_name: firstNameField.value,
+                    last_name: lastNameField.value,
+                    role: roleField.value,
+                    email: emailField.value,
+                    phone_number: phoneNumberField.value
+                };
+
+                if (employeeId) {
+                    updateEmployee(employeeId, employeeData);
+                } else {
+                    createEmployee(employeeData);
+                }
+            });
+
+            // Search functionality
+            searchBtn.addEventListener('click', function() {
+                const searchTerm = searchInput.value.trim();
+                fetchEmployees(searchTerm);
+            });
+
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const searchTerm = searchInput.value.trim();
+                    fetchEmployees(searchTerm);
+                }
+            });
+
+            // Create a new employee
+            function createEmployee(employeeData) {
+                showLoading();
+                hideError();
+
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                fetch('/api/employees', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify(employeeData)
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(data => {
+                                throw new Error(data.message || 'Failed to create employee');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        hideLoading();
+                        employeeForm.style.display = 'none';
+                        showFormBtn.style.display = 'block';
+                        showSuccess('Employee created successfully!');
+                        fetchEmployees();
+                    })
+                    .catch(error => {
+                        hideLoading();
+                        showError('Error creating employee: ' + error.message);
+                        console.error('Error:', error);
+                    });
+            }
+
+            // View employee details
+            function viewEmployee(id) {
+                showLoading();
+                hideError();
+
+                fetch(`/api/employees/${id}`, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch employee details');
+                        }
+                        return response.json();
+                    })
+                    .then(employee => {
+                        hideLoading();
+
+                        // Store employee ID for edit button
+                        employeeIdField.value = employee.employee_id;
+
+                        // Display employee details
+                        document.getElementById('detailName').textContent =
+                            `${employee.first_name} ${employee.last_name}`;
+                        document.getElementById('detailRole').textContent = employee.role;
+                        document.getElementById('detailEmail').textContent = employee.email;
+                        document.getElementById('detailPhoneNumber').textContent = employee.phone_number;
+
+                        // Load sales history
+                        const salesHistoryTableBody = document.getElementById('salesHistoryTableBody');
+                        salesHistoryTableBody.innerHTML = '';
+
+                        // Combine purchase contracts and procurement contracts for the sales history
+                        const allContracts = [];
+
+                        // Add purchase contracts
+                        if (employee.purchase_contracts && employee.purchase_contracts.length > 0) {
+                            employee.purchase_contracts.forEach(contract => {
+                                allContracts.push({
+                                    id: contract.contract_id,
+                                    type: 'Purchase',
+                                    vehicle: contract.vehicle,
+                                    customer: contract.buyer,
+                                    date: contract.contract_date
+                                });
+                            });
+                        }
+
+                        // Add procurement contracts
+                        if (employee.procurement_contracts && employee.procurement_contracts.length > 0) {
+                            employee.procurement_contracts.forEach(contract => {
+                                allContracts.push({
+                                    id: contract.contract_id,
+                                    type: 'Procurement',
+                                    vehicle: contract.vehicle,
+                                    customer: contract.seller,
+                                    date: contract.contract_date
+                                });
+                            });
+                        }
+
+                        if (allContracts.length > 0) {
+                            allContracts.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                            allContracts.forEach(contract => {
+                                let vehicle = contract.vehicle || {};
+                                let customer = contract.type === 'Purchase' ? contract.customer : contract.customer;
+                                
+                                const vehicleInfo = vehicle ? 
+                                    `${vehicle.manufacturer?.name || ''} ${vehicle.model?.model_name || ''} (${vehicle.vin || 'No VIN'})` : 
+                                    'N/A';
+                                
+                                const customerName = customer ?
+                                    `${customer.first_name} ${customer.last_name}` :
+                                    'N/A';
+
+                                const row = document.createElement('tr');
+                                row.innerHTML = `
+                                    <td>${contract.id}</td>
+                                    <td>${contract.type}</td>
+                                    <td>${vehicleInfo}</td>
+                                    <td>${customerName}</td>
+                                    <td>${new Date(contract.date).toLocaleDateString()}</td>
+                                `;
+                                salesHistoryTableBody.appendChild(row);
+                            });
+                        } else {
+                            const row = document.createElement('tr');
+                            row.innerHTML = '<td colspan="5" class="text-center">No sales history found</td>';
+                            salesHistoryTableBody.appendChild(row);
+                        }
+
+                        // Show the details view
+                        employeeDetails.style.display = 'block';
+                        employeeForm.style.display = 'none';
+                        showFormBtn.style.display = 'none';
+                    })
+                    .catch(error => {
+                        hideLoading();
+                        showError('Error loading employee details: ' + error.message);
+                        console.error('Error:', error);
+                    });
+            }
+
+            // Fetch employee details for editing
+            function editEmployee(id) {
+                showLoading();
+                hideError();
+
+                fetch(`/api/employees/${id}`, {
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch employee details');
+                        }
+                        return response.json();
+                    })
+                    .then(employee => {
+                        hideLoading();
+
+                        // Set form title and employee ID
+                        formTitle.textContent = `Edit Employee: ${employee.first_name} ${employee.last_name}`;
+                        employeeIdField.value = employee.employee_id;
+
+                        // Populate form fields
+                        firstNameField.value = employee.first_name;
+                        lastNameField.value = employee.last_name;
+                        roleField.value = employee.role;
+                        emailField.value = employee.email;
+                        phoneNumberField.value = employee.phone_number;
+
+                        // Show the form
+                        employeeForm.style.display = 'block';
+                        employeeDetails.style.display = 'none';
+                        showFormBtn.style.display = 'none';
+                    })
+                    .catch(error => {
+                        hideLoading();
+                        showError('Error loading employee details: ' + error.message);
+                        console.error('Error:', error);
+                    });
+            }
+
+            // Update an existing employee
+            function updateEmployee(id, employeeData) {
+                showLoading();
+                hideError();
+
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                fetch(`/api/employees/${id}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify(employeeData)
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(data => {
+                                throw new Error(data.message || 'Failed to update employee');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        hideLoading();
+                        employeeForm.style.display = 'none';
+                        showFormBtn.style.display = 'block';
+                        showSuccess('Employee updated successfully!');
+                        fetchEmployees();
+                    })
+                    .catch(error => {
+                        hideLoading();
+                        showError('Error updating employee: ' + error.message);
+                        console.error('Error:', error);
+                    });
+            }
+
+            // Delete an employee
+            function deleteEmployee(id) {
+                if (!confirm('Are you sure you want to delete this employee? This cannot be undone.')) {
+                    return;
+                }
+
+                showLoading();
+                hideError();
+
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                fetch(`/api/employees/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(data => {
+                                throw new Error(data.message || 'Failed to delete employee');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        hideLoading();
+                        showSuccess('Employee deleted successfully!');
+                        fetchEmployees();
+                    })
+                    .catch(error => {
+                        hideLoading();
+                        showError('Error deleting employee: ' + error.message);
+                        console.error('Error:', error);
+                    });
+            }
+
+            // Initial load
+            fetchEmployees();
+        });
     </script>
 </body>
 
