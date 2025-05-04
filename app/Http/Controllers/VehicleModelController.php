@@ -27,8 +27,6 @@ class VehicleModelController extends Controller
         $validator = Validator::make($request->all(), [
             'model_name' => 'required|string|max:255',
             'manufacturer_id' => 'required|exists:manufacturers,manufacturer_id',
-            'year_from' => 'required|integer|min:1900|max:' . (date('Y') + 1),
-            'year_to' => 'nullable|integer|min:1900|max:' . (date('Y') + 10),
         ]);
 
         if ($validator->fails()) {
@@ -68,8 +66,6 @@ class VehicleModelController extends Controller
         $validator = Validator::make($request->all(), [
             'model_name' => 'sometimes|required|string|max:255',
             'manufacturer_id' => 'sometimes|required|exists:manufacturers,manufacturer_id',
-            'year_from' => 'sometimes|required|integer|min:1900|max:' . (date('Y') + 1),
-            'year_to' => 'nullable|integer|min:1900|max:' . (date('Y') + 10),
         ]);
 
         if ($validator->fails()) {
