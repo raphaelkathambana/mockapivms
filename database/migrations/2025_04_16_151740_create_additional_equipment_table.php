@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('equipment_id');
             $table->string('vin');
             $table->text('equipment_description');
+            $table->string('condition');
             $table->timestamps();
 
             $table->foreign('vin')->references('vin')->on('vehicles');

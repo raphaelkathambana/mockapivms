@@ -21,6 +21,9 @@ class AdditionalEquipmentSeeder extends Seeder
             'Heated Seats', 'Leather Interior', 'Alloy Wheels',
             'Remote Start', 'Bluetooth', 'USB Ports', 'Wireless Charging'
         ];
+        $equipmentConditions = [
+            'New', 'Used', 'Refurbished'
+        ];
 
         foreach ($vehicles as $vehicle) {
             // Add 0-5 pieces of additional equipment to each vehicle
@@ -39,6 +42,7 @@ class AdditionalEquipmentSeeder extends Seeder
                     AdditionalEquipment::create([
                         'vin' => $vehicle->vin,
                         'equipment_description' => $equipmentTypes[$equipmentIndex],
+                        'condition' => $equipmentConditions[array_rand($equipmentConditions)]
                     ]);
                 }
             }
