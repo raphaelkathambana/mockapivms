@@ -16,6 +16,9 @@ class Tire extends Model
         'vin',
         'tread_depth',
         'rim_type',
+        'position',
+        'tire_type',
+        'rim_status'
     ];
 
     protected $casts = [

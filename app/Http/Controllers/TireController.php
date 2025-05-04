@@ -26,15 +26,11 @@ class TireController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'vin' => 'required|string|exists:vehicles,vin',
-            'tire_brand' => 'required|string|max:255',
-            'tire_model' => 'required|string|max:255',
-            'tire_size' => 'required|string|max:50',
-            'tire_type' => 'required|string|max:50',
-            'production_date' => 'required|date',
-            'purchase_date' => 'required|date',
             'tread_depth' => 'required|numeric|min:0|max:20',
-            'position' => 'required|string|in:Front Left,Front Right,Rear Left,Rear Right,Spare',
-            'condition' => 'required|string|in:New,Good,Fair,Poor,Needs Replacement',
+            'rim_type' => 'required|string|in:Steel,Aluminum,Alloy,Magnesium,Carbon Fiber',
+            'position' => 'required|string|in:left-front,right-front,left-back,right-back',
+            'tire_type' => 'required|string|in:summer,winter,all-season',
+            'rim_status' => 'required|string|in:aftermarket,original',
         ]);
 
         if ($validator->fails()) {
@@ -73,15 +69,11 @@ class TireController extends Controller
 
         $validator = Validator::make($request->all(), [
             'vin' => 'sometimes|required|string|exists:vehicles,vin',
-            'tire_brand' => 'sometimes|required|string|max:255',
-            'tire_model' => 'sometimes|required|string|max:255',
-            'tire_size' => 'sometimes|required|string|max:50',
-            'tire_type' => 'sometimes|required|string|max:50',
-            'production_date' => 'sometimes|required|date',
-            'purchase_date' => 'sometimes|required|date',
             'tread_depth' => 'sometimes|required|numeric|min:0|max:20',
-            'position' => 'sometimes|required|string|in:Front Left,Front Right,Rear Left,Rear Right,Spare',
-            'condition' => 'sometimes|required|string|in:New,Good,Fair,Poor,Needs Replacement',
+            'rim_type' => 'sometimes|required|string|in:Steel,Aluminum,Alloy,Magnesium,Carbon Fiber',
+            'position' => 'sometimes|required|string|in:left-front,right-front,left-back,right-back',
+            'tire_type' => 'sometimes|required|string|in:summer,winter,all-season',
+            'rim_status' => 'sometimes|required|string|in:aftermarket,original',
         ]);
 
         if ($validator->fails()) {

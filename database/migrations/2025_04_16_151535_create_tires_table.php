@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('vin');
             $table->decimal('tread_depth', 5, 2);
             $table->string('rim_type');
+            $table->enum('position', ['left-front', 'right-front', 'left-back', 'right-back']);
+            $table->enum('tire_type', ['summer', 'winter', 'all-season']);
+            $table->enum('rim_status', ['aftermarket', 'original']);
             $table->timestamps();
 
             $table->foreign('vin')->references('vin')->on('vehicles');

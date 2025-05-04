@@ -23,15 +23,26 @@ class TireSeeder extends Seeder
             'Carbon Fiber',
         ];
 
-        foreach ($vehicles as $vehicle) {
-            // Create 4 or 5 tires for each vehicle (4 regular + possibly 1 spare)
-            $tireCount = rand(0, 10) > 3 ? 5 : 4;
+        $positions = [
+            'left-front',
+            'right-front',
+            'left-back',
+            'right-back'
+        ];
 
-            for ($i = 0; $i < $tireCount; $i++) {
+        $tireTypes = ['summer', 'winter', 'all-season'];
+        $rimStatuses = ['aftermarket', 'original'];
+
+        foreach ($vehicles as $vehicle) {
+            // Create 4 tires for each vehicle
+            foreach ($positions as $position) {
                 Tire::create([
                     'vin' => $vehicle->vin,
                     'rim_type' => $rimTypes[array_rand($rimTypes)],
                     'tread_depth' => rand(2, 10),
+                    'position' => $position,
+                    'tire_type' => $tireTypes[array_rand($tireTypes)],
+                    'rim_status' => $rimStatuses[array_rand($rimStatuses)]
                 ]);
             }
         }
