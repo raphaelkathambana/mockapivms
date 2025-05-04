@@ -41,4 +41,8 @@ class Seller extends Model
     {
         return $this->hasMany(ProcurementContract::class, 'seller_id');
     }
+    public function vehicleConfirmations(): HasMany
+    {
+        return $this->hasMany(VehicleConfirmation::class, 'seller_id');
+    }
 }
