@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProcurementContractController;
 use App\Http\Controllers\PurchaseLogController;
+use App\Http\Controllers\VehicleConfirmationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ItemController;
@@ -67,12 +68,14 @@ Route::get('sellers/with-address', [SellerController::class, 'getSellersWithAddr
 Route::get('sellers/by-customer-type/{customer_type_id}', [SellerController::class, 'getByCustomerType']);
 
 // Vehicle API
-Route::apiResource('vehicles', VehicleController::class);
+// Important: Place custom routes before the resource routes to avoid conflicts
+Route::get('vehicles/needs-confirmation', [VehicleController::class, 'getVehiclesNeedingConfirmation']);
 Route::get('vehicles/available', [VehicleController::class, 'getAvailableVehicles']);
 Route::get('vehicles/by-manufacturer/{manufacturer_id}', [VehicleController::class, 'getByManufacturer']);
 Route::get('vehicles/by-model/{model_id}', [VehicleController::class, 'getByModel']);
 Route::get('vehicles/by-year/{year}', [VehicleController::class, 'getByYear']);
 Route::get('vehicles/by-price-range/{min}/{max}', [VehicleController::class, 'getByPriceRange']);
+Route::apiResource('vehicles', VehicleController::class);
 
 // Purchase Contract API
 Route::apiResource('purchase-contracts', PurchaseContractController::class);
@@ -128,3 +131,5 @@ Route::get('purchase-logs/by-vehicle/{vin}', [PurchaseLogController::class, 'get
 Route::get('purchase-logs/by-seller/{seller_id}', [PurchaseLogController::class, 'getBySeller']);
 Route::get('purchase-logs/by-employee/{employee_id}', [PurchaseLogController::class, 'getByEmployee']);
 Route::get('purchase-logs-related-data', [PurchaseLogController::class, 'getRelatedData']);
+// Vehicle Confirmations API
+Route::apiResource('vehicle-confirmations', VehicleConfirmationController::class);
