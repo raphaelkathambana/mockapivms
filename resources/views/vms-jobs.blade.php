@@ -8,8 +8,11 @@
     <title>VMS Jobs Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <style>
-        [x-cloak] { display: none !important; }
+        [x-cloak] {
+            display: none !important;
+        }
     </style>
 </head>
 
@@ -45,7 +48,7 @@
             </div>
 
             <!-- Right Panel - Job Details -->
-            <div class="md:col-span-2 bg-white rounded-lg shadow-md p-6">
+            <div class="md:col-span-2 bg-white rounded-lg shadow-md p-6" x-data="procurementData">
                 <!-- No Selection State -->
                 <div x-show="!selectedJob" class="h-full flex items-center justify-center">
                     <div class="text-center text-gray-500">
@@ -60,7 +63,7 @@
                 </div>
 
                 <!-- Procurement Job -->
-                <div x-show="selectedJob === 'procurement'" x-cloak x-data="procurementData">
+                <div x-show="selectedJob === 'procurement'" x-cloak>
                     <h2 class="text-xl font-semibold mb-4">Vehicle Procurement Process</h2>
 
                     <!-- Initial Options -->
@@ -102,7 +105,8 @@
                                         </div>
                                         <div>
                                             <label for="manufacturer_country_of_origin"
-                                                class="block text-sm font-medium text-gray-700">Country of Origin</label>
+                                                class="block text-sm font-medium text-gray-700">Country of
+                                                Origin</label>
                                             <input type="text" id="manufacturer_country_of_origin"
                                                 x-model="newManufacturer.country_of_origin" required
                                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
@@ -271,23 +275,27 @@
                     </div>
 
                     <!-- Seller Modal -->
-                    <div x-show="showSellerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div x-show="showSellerModal"
+                        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                         <div class="bg-white p-6 rounded-lg w-96">
                             <h4 class="text-lg font-medium mb-4">Add New Seller</h4>
                             <form @submit.prevent="addNewSeller">
                                 <div class="space-y-4">
                                     <div>
-                                        <label for="seller_first_name" class="block text-sm font-medium text-gray-700">First Name</label>
-                                        <input type="text" id="seller_first_name" x-model="newSeller.first_name" required
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                        <label for="seller_first_name"
+                                            class="block text-sm font-medium text-gray-700">First Name</label>
+                                        <input type="text" id="seller_first_name" x-model="newSeller.first_name"
+                                            required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                     </div>
                                     <div>
-                                        <label for="seller_last_name" class="block text-sm font-medium text-gray-700">Last Name</label>
-                                        <input type="text" id="seller_last_name" x-model="newSeller.last_name" required
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                        <label for="seller_last_name"
+                                            class="block text-sm font-medium text-gray-700">Last Name</label>
+                                        <input type="text" id="seller_last_name" x-model="newSeller.last_name"
+                                            required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                     </div>
                                     <div>
-                                        <label for="seller_gender" class="block text-sm font-medium text-gray-700">Gender</label>
+                                        <label for="seller_gender"
+                                            class="block text-sm font-medium text-gray-700">Gender</label>
                                         <select id="seller_gender" x-model="newSeller.gender" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                             <option value="Male">Male</option>
@@ -296,17 +304,20 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <label for="seller_phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
-                                        <input type="tel" id="seller_phone" x-model="newSeller.phone_number" required
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                        <label for="seller_phone"
+                                            class="block text-sm font-medium text-gray-700">Phone Number</label>
+                                        <input type="tel" id="seller_phone" x-model="newSeller.phone_number"
+                                            required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                     </div>
                                     <div>
-                                        <label for="seller_email" class="block text-sm font-medium text-gray-700">Email</label>
+                                        <label for="seller_email"
+                                            class="block text-sm font-medium text-gray-700">Email</label>
                                         <input type="email" id="seller_email" x-model="newSeller.email" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                     </div>
                                     <div>
-                                        <label for="seller_address" class="block text-sm font-medium text-gray-700">Address</label>
+                                        <label for="seller_address"
+                                            class="block text-sm font-medium text-gray-700">Address</label>
                                         <div class="mt-1 flex space-x-2">
                                             <select id="seller_address" x-model="newSeller.address_id" required
                                                 class="block w-full rounded-md border-gray-300 shadow-sm">
@@ -319,7 +330,8 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <label for="seller_type" class="block text-sm font-medium text-gray-700">Customer Type</label>
+                                        <label for="seller_type"
+                                            class="block text-sm font-medium text-gray-700">Customer Type</label>
                                         <select id="seller_type" x-model="newSeller.customer_type_id" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                             <option value="">Select Type</option>
@@ -337,35 +349,43 @@
                     </div>
 
                     <!-- Address Modal -->
-                    <div x-show="showAddressModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div x-show="showAddressModal"
+                        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                         <div class="bg-white p-6 rounded-lg w-96">
                             <h4 class="text-lg font-medium mb-4">Add New Address</h4>
                             <form @submit.prevent="addNewAddress">
                                 <div class="space-y-4">
                                     <div>
-                                        <label for="address_street" class="block text-sm font-medium text-gray-700">Street</label>
-                                        <input type="text" id="address_street" x-model="newAddress.street" required
+                                        <label for="address_street"
+                                            class="block text-sm font-medium text-gray-700">Street</label>
+                                        <input type="text" id="address_street" x-model="newAddress.street"
+                                            required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                    </div>
+                                    <div>
+                                        <label for="address_house_number"
+                                            class="block text-sm font-medium text-gray-700">House Number</label>
+                                        <input type="text" id="address_house_number"
+                                            x-model="newAddress.house_number" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                     </div>
                                     <div>
-                                        <label for="address_house_number" class="block text-sm font-medium text-gray-700">House Number</label>
-                                        <input type="text" id="address_house_number" x-model="newAddress.house_number" required
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                                    </div>
-                                    <div>
-                                        <label for="address_city" class="block text-sm font-medium text-gray-700">City</label>
+                                        <label for="address_city"
+                                            class="block text-sm font-medium text-gray-700">City</label>
                                         <input type="text" id="address_city" x-model="newAddress.city" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                     </div>
                                     <div>
-                                        <label for="address_postal_code" class="block text-sm font-medium text-gray-700">Postal Code</label>
-                                        <input type="text" id="address_postal_code" x-model="newAddress.postal_code" required
+                                        <label for="address_postal_code"
+                                            class="block text-sm font-medium text-gray-700">Postal Code</label>
+                                        <input type="text" id="address_postal_code"
+                                            x-model="newAddress.postal_code" required
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                     </div>
                                     <div>
-                                        <label for="address_country" class="block text-sm font-medium text-gray-700">Country</label>
-                                        <input type="text" id="address_country" x-model="newAddress.country" required
-                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                        <label for="address_country"
+                                            class="block text-sm font-medium text-gray-700">Country</label>
+                                        <input type="text" id="address_country" x-model="newAddress.country"
+                                            required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                     </div>
                                     <div class="flex justify-end space-x-2">
                                         <button type="button" @click="showAddressModal = false"
@@ -405,8 +425,11 @@
                                 <input type="hidden" name="original_vin" x-model="originalVin">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label for="vin_input" class="block text-sm font-medium text-gray-700">VIN</label>
-                                        <input type="text" id="vin_input" name="vin" x-model="confirmationVin" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                        <label for="vin_input"
+                                            class="block text-sm font-medium text-gray-700">VIN</label>
+                                        <input type="text" id="vin_input" name="vin"
+                                            x-model="confirmationVin" required
+                                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                     </div>
                                     <div>
                                         <label for="previous_owners"
@@ -415,12 +438,16 @@
                                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                     </div>
                                     <div>
-                                        <label for="sellerSelect" class="block text-sm font-medium text-gray-700">Seller</label>
+                                        <label for="sellerSelect"
+                                            class="block text-sm font-medium text-gray-700">Seller</label>
                                         <div class="mt-1 flex space-x-2">
-                                            <select id="sellerSelect" name="seller_id" required class="block w-full rounded-md border-gray-300 shadow-sm">
+                                            <select id="sellerSelect" name="seller_id" required
+                                                class="block w-full rounded-md border-gray-300 shadow-sm">
                                                 <option value="">Select Seller</option>
                                             </select>
-                                            <button type="button" @click="console.log('Opening seller modal...'); showSellerModal = true" class="px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                                            <button type="button"
+                                                @click="console.log('Opening seller modal...'); showSellerModal = true"
+                                                class="px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
                                                 +
                                             </button>
                                         </div>
@@ -474,13 +501,15 @@
                                             <input type="hidden" name="tire_position_fl" value="left-front">
                                             <div class="space-y-2">
                                                 <div>
-                                                    <label for="tire_tread_depth_fl" class="block text-xs text-gray-500">Tread Depth (mm)</label>
-                                                    <input type="number" id="tire_tread_depth_fl" step="0.1" name="tire_tread_depth_fl"
-                                                        min="0" max="20"
+                                                    <label for="tire_tread_depth_fl"
+                                                        class="block text-xs text-gray-500">Tread Depth (mm)</label>
+                                                    <input type="number" id="tire_tread_depth_fl" step="0.1"
+                                                        name="tire_tread_depth_fl" min="0" max="20"
                                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                                 </div>
                                                 <div>
-                                                    <label for="tire_rim_type_fl" class="block text-xs text-gray-500">Rim Type</label>
+                                                    <label for="tire_rim_type_fl"
+                                                        class="block text-xs text-gray-500">Rim Type</label>
                                                     <select id="tire_rim_type_fl" name="tire_rim_type_fl"
                                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                                         <option value="Steel">Steel</option>
@@ -491,7 +520,8 @@
                                                     </select>
                                                 </div>
                                                 <div>
-                                                    <label for="tire_type_fl" class="block text-xs text-gray-500">Tire Type</label>
+                                                    <label for="tire_type_fl" class="block text-xs text-gray-500">Tire
+                                                        Type</label>
                                                     <select id="tire_type_fl" name="tire_type_fl"
                                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                                         <option value="summer">Summer</option>
@@ -500,7 +530,8 @@
                                                     </select>
                                                 </div>
                                                 <div>
-                                                    <label for="tire_rim_status_fl" class="block text-xs text-gray-500">Rim Status</label>
+                                                    <label for="tire_rim_status_fl"
+                                                        class="block text-xs text-gray-500">Rim Status</label>
                                                     <select id="tire_rim_status_fl" name="tire_rim_status_fl"
                                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                                         <option value="original">Original</option>
@@ -516,13 +547,15 @@
                                             <input type="hidden" name="tire_position_fr" value="right-front">
                                             <div class="space-y-2">
                                                 <div>
-                                                    <label for="tire_tread_depth_fr" class="block text-xs text-gray-500">Tread Depth (mm)</label>
-                                                    <input type="number" id="tire_tread_depth_fr" step="0.1" name="tire_tread_depth_fr"
-                                                        min="0" max="20"
+                                                    <label for="tire_tread_depth_fr"
+                                                        class="block text-xs text-gray-500">Tread Depth (mm)</label>
+                                                    <input type="number" id="tire_tread_depth_fr" step="0.1"
+                                                        name="tire_tread_depth_fr" min="0" max="20"
                                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                                 </div>
                                                 <div>
-                                                    <label for="tire_rim_type_fr" class="block text-xs text-gray-500">Rim Type</label>
+                                                    <label for="tire_rim_type_fr"
+                                                        class="block text-xs text-gray-500">Rim Type</label>
                                                     <select id="tire_rim_type_fr" name="tire_rim_type_fr"
                                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                                         <option value="Steel">Steel</option>
@@ -533,7 +566,8 @@
                                                     </select>
                                                 </div>
                                                 <div>
-                                                    <label for="tire_type_fr" class="block text-xs text-gray-500">Tire Type</label>
+                                                    <label for="tire_type_fr" class="block text-xs text-gray-500">Tire
+                                                        Type</label>
                                                     <select id="tire_type_fr" name="tire_type_fr"
                                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                                         <option value="summer">Summer</option>
@@ -542,7 +576,8 @@
                                                     </select>
                                                 </div>
                                                 <div>
-                                                    <label for="tire_rim_status_fr" class="block text-xs text-gray-500">Rim Status</label>
+                                                    <label for="tire_rim_status_fr"
+                                                        class="block text-xs text-gray-500">Rim Status</label>
                                                     <select id="tire_rim_status_fr" name="tire_rim_status_fr"
                                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                                         <option value="original">Original</option>
@@ -558,13 +593,15 @@
                                             <input type="hidden" name="tire_position_rl" value="left-back">
                                             <div class="space-y-2">
                                                 <div>
-                                                    <label for="tire_tread_depth_rl" class="block text-xs text-gray-500">Tread Depth (mm)</label>
-                                                    <input type="number" id="tire_tread_depth_rl" step="0.1" name="tire_tread_depth_rl"
-                                                        min="0" max="20"
+                                                    <label for="tire_tread_depth_rl"
+                                                        class="block text-xs text-gray-500">Tread Depth (mm)</label>
+                                                    <input type="number" id="tire_tread_depth_rl" step="0.1"
+                                                        name="tire_tread_depth_rl" min="0" max="20"
                                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                                 </div>
                                                 <div>
-                                                    <label for="tire_rim_type_rl" class="block text-xs text-gray-500">Rim Type</label>
+                                                    <label for="tire_rim_type_rl"
+                                                        class="block text-xs text-gray-500">Rim Type</label>
                                                     <select id="tire_rim_type_rl" name="tire_rim_type_rl"
                                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                                         <option value="Steel">Steel</option>
@@ -575,7 +612,8 @@
                                                     </select>
                                                 </div>
                                                 <div>
-                                                    <label for="tire_type_rl" class="block text-xs text-gray-500">Tire Type</label>
+                                                    <label for="tire_type_rl" class="block text-xs text-gray-500">Tire
+                                                        Type</label>
                                                     <select id="tire_type_rl" name="tire_type_rl"
                                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                                         <option value="summer">Summer</option>
@@ -584,7 +622,8 @@
                                                     </select>
                                                 </div>
                                                 <div>
-                                                    <label for="tire_rim_status_rl" class="block text-xs text-gray-500">Rim Status</label>
+                                                    <label for="tire_rim_status_rl"
+                                                        class="block text-xs text-gray-500">Rim Status</label>
                                                     <select id="tire_rim_status_rl" name="tire_rim_status_rl"
                                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                                         <option value="original">Original</option>
@@ -600,13 +639,15 @@
                                             <input type="hidden" name="tire_position_rr" value="right-back">
                                             <div class="space-y-2">
                                                 <div>
-                                                    <label for="tire_tread_depth_rr" class="block text-xs text-gray-500">Tread Depth (mm)</label>
-                                                    <input type="number" id="tire_tread_depth_rr" step="0.1" name="tire_tread_depth_rr"
-                                                        min="0" max="20"
+                                                    <label for="tire_tread_depth_rr"
+                                                        class="block text-xs text-gray-500">Tread Depth (mm)</label>
+                                                    <input type="number" id="tire_tread_depth_rr" step="0.1"
+                                                        name="tire_tread_depth_rr" min="0" max="20"
                                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                                 </div>
                                                 <div>
-                                                    <label for="tire_rim_type_rr" class="block text-xs text-gray-500">Rim Type</label>
+                                                    <label for="tire_rim_type_rr"
+                                                        class="block text-xs text-gray-500">Rim Type</label>
                                                     <select id="tire_rim_type_rr" name="tire_rim_type_rr"
                                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                                         <option value="Steel">Steel</option>
@@ -617,7 +658,8 @@
                                                     </select>
                                                 </div>
                                                 <div>
-                                                    <label for="tire_type_rr" class="block text-xs text-gray-500">Tire Type</label>
+                                                    <label for="tire_type_rr" class="block text-xs text-gray-500">Tire
+                                                        Type</label>
                                                     <select id="tire_type_rr" name="tire_type_rr"
                                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                                         <option value="summer">Summer</option>
@@ -626,7 +668,8 @@
                                                     </select>
                                                 </div>
                                                 <div>
-                                                    <label for="tire_rim_status_rr" class="block text-xs text-gray-500">Rim Status</label>
+                                                    <label for="tire_rim_status_rr"
+                                                        class="block text-xs text-gray-500">Rim Status</label>
                                                     <select id="tire_rim_status_rr" name="tire_rim_status_rr"
                                                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
                                                         <option value="original">Original</option>
@@ -658,24 +701,167 @@
                     </div>
                 </div>
 
-                <!-- Sale Job -->
-                <div x-show="selectedJob === 'sale'" x-cloak>
-                    <h2 class="text-xl font-semibold mb-4">Vehicle Sale Process</h2>
-                    <div class="space-y-4">
-                        <p class="text-gray-600">Follow these steps to complete a vehicle sale:</p>
-                        <ol class="list-decimal pl-5 space-y-2">
-                            <li>Verify buyer information</li>
-                            <li>Select vehicle from inventory</li>
-                            <li>Prepare sales documentation</li>
-                            <li>Process payment</li>
-                            <li>Transfer vehicle ownership</li>
-                            <li>Update inventory status</li>
-                        </ol>
-                        <div class="mt-6">
-                            <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-                                Start Sale Process
+                <!-- Contract Process -->
+                <div x-show="contractProcess === true" class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-medium">Contract Process</h3>
+                        <button @click="contractProcess = false; completedConfirmation = true"
+                            class="text-gray-600 hover:text-gray-800">← Back to Confirmation</button>
+                    </div>
+
+                    <!-- Registration Info Step -->
+                    <div x-show="contractStep === 'registration'" class="space-y-4">
+                        <h4 class="font-medium">Vehicle Registration Information</h4>
+                        <form @submit.prevent="submitRegistrationData" class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label for="first_registration"
+                                        class="block text-sm font-medium text-gray-700">First Registration Date</label>
+                                    <input type="date" id="first_registration"
+                                        x-model="contractData.first_registration" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                </div>
+                                <div>
+                                    <label for="purchase_price"
+                                        class="block text-sm font-medium text-gray-700">Purchase Price</label>
+                                    <input type="number" id="purchase_price" x-model="contractData.purchase_price"
+                                        required min="0" step="0.01"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                </div>
+                            </div>
+                            <div class="flex justify-end">
+                                <button type="submit"
+                                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                    Continue to Contract Generation
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Contract Generation Step -->
+                    <div x-show="contractStep === 'contract'" class="space-y-4">
+                        <h4 class="font-medium">Procurement Contract</h4>
+                        <div class="border p-4 rounded-lg space-y-4 bg-gray-50">
+                            <div class="text-center">
+                                <h5 class="text-lg font-bold">Vehicle Procurement Contract</h5>
+                                <p class="text-sm text-gray-600">Contract Date: <span
+                                        x-text="contractData.contract_date || ''"></span></p>
+                            </div>
+                            <div class="space-y-2">
+                                <p><strong>Vehicle Information:</strong></p>
+                                <p>VIN: <span x-text="contractData.vin || ''"></span></p>
+                                <p>First Registration: <span x-text="contractData.first_registration || ''"></span></p>
+                                <p>Purchase Price: <span
+                                        x-text="contractData.purchase_price ? new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(contractData.purchase_price) : '0,00 €'"></span>
+                                </p>
+                            </div>
+                            <div class="space-y-2">
+                                <p><strong>Terms and Conditions:</strong></p>
+                                <p class="text-sm">This procurement contract confirms the purchase of the vehicle
+                                    identified by the VIN above at the agreed purchase price. The vehicle's condition
+                                    and specifications have been verified during the confirmation process.</p>
+                            </div>
+                            <div class="space-y-2">
+                                <p><strong>Authorized Signature:</strong></p>
+                                <div class="border bg-white rounded">
+                                    <canvas id="signatureCanvas" class="w-full" height="150"></canvas>
+                                </div>
+                                <div class="flex justify-end">
+                                    <button type="button" @click="clearSignature"
+                                        class="text-blue-600 hover:text-blue-800 text-sm">
+                                        Clear Signature
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end">
+                            <button type="button" @click="submitContract"
+                                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Generate Contract
                             </button>
                         </div>
+                    </div>
+
+                    <!-- Purchase Log Step -->
+                    <div x-show="contractStep === 'purchaseLog'" class="space-y-4">
+                        <h4 class="font-medium">Purchase Log</h4>
+                        <form @submit.prevent="submitPurchaseLog" class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label for="purchase_date"
+                                        class="block text-sm font-medium text-gray-700">Purchase Date</label>
+                                    <input type="date" id="purchase_date" x-model="purchaseLogData.purchase_date"
+                                        required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                </div>
+                                <div>
+                                    <label for="purchase_price_log"
+                                        class="block text-sm font-medium text-gray-700">Purchase Price</label>
+                                    <input type="number" id="purchase_price_log"
+                                        x-model="purchaseLogData.purchase_price" required min="0"
+                                        step="0.01" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                </div>
+                                <div class="col-span-2">
+                                    <label for="purchased_from"
+                                        class="block text-sm font-medium text-gray-700">Purchased From</label>
+                                    <input type="text" id="purchased_from"
+                                        x-model="purchaseLogData.purchased_from" required
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                </div>
+                                <div class="col-span-2">
+                                    <label for="purchase_notes"
+                                        class="block text-sm font-medium text-gray-700">Notes</label>
+                                    <textarea id="purchase_notes" x-model="purchaseLogData.notes" rows="3"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></textarea>
+                                </div>
+                            </div>
+                            <div class="flex justify-end">
+                                <button type="submit"
+                                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                    Submit Purchase Log
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Completion Step -->
+                    <div x-show="contractStep === 'complete'" class="space-y-4">
+                        <div class="text-center py-6">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500 mx-auto mb-4"
+                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                            <h4 class="text-xl font-medium text-green-600">Procurement Process Complete!</h4>
+                            <p class="text-gray-600 mt-2">The vehicle has been successfully procured and is now part of
+                                your inventory.</p>
+                        </div>
+                        <div class="flex justify-center">
+                            <button @click="viewVehicle"
+                                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                View Vehicle
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sale Job -->
+            <div x-show="selectedJob === 'sale'" x-cloak>
+                <h2 class="text-xl font-semibold mb-4">Vehicle Sale Process</h2>
+                <div class="space-y-4">
+                    <p class="text-gray-600">Follow these steps to complete a vehicle sale:</p>
+                    <ol class="list-decimal pl-5 space-y-2">
+                        <li>Verify buyer information</li>
+                        <li>Select vehicle from inventory</li>
+                        <li>Prepare sales documentation</li>
+                        <li>Process payment</li>
+                        <li>Transfer vehicle ownership</li>
+                        <li>Update inventory status</li>
+                    </ol>
+                    <div class="mt-6">
+                        <button class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                            Start Sale Process
+                        </button>
                     </div>
                 </div>
             </div>
@@ -689,6 +875,24 @@
                 newVehicle: false,
                 confirmation: false,
                 completedConfirmation: false,
+                contractProcess: false,
+                contractStep: 'registration', // Initialize with default value
+                contractData: {
+                    vin: null,
+                    first_registration: null,
+                    purchase_price: 0,
+                    contract_date: new Date().toISOString().split('T')[0],
+                    signature: null
+                },
+                purchaseLogData: {
+                    vin: null,
+                    purchase_date: new Date().toISOString().split('T')[0],
+                    purchase_price: 0,
+                    purchased_from: '',
+                    notes: ''
+                },
+                procurementContract: null,
+                signaturePad: null,
                 selectedVehicle: null,
                 selectedManufacturer: null,
                 showManufacturerModal: false,
@@ -728,6 +932,8 @@
                     this.showOptions = true;
                     this.newVehicle = false;
                     this.confirmation = false;
+                    this.contractProcess = false;
+                    this.contractStep = null;
                 },
 
                 // Start new vehicle process
@@ -933,7 +1139,8 @@
                             headers: {
                                 'Content-Type': 'application/json',
                                 'Accept': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                'X-CSRF-TOKEN': document.querySelector(
+                                    'meta[name="csrf-token"]').getAttribute('content')
                             },
                             body: JSON.stringify(modelData)
                         });
@@ -968,7 +1175,8 @@
                             headers: {
                                 'Content-Type': 'application/json',
                                 'Accept': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                'X-CSRF-TOKEN': document.querySelector(
+                                    'meta[name="csrf-token"]').getAttribute('content')
                             },
                             body: JSON.stringify(this.newSeller)
                         });
@@ -1009,7 +1217,8 @@
                             headers: {
                                 'Content-Type': 'application/json',
                                 'Accept': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                'X-CSRF-TOKEN': document.querySelector(
+                                    'meta[name="csrf-token"]').getAttribute('content')
                             },
                             body: JSON.stringify(this.newAddress)
                         });
@@ -1095,22 +1304,26 @@
 
                             // Populate seller if exists
                             if (vehicle.seller_id) {
-                                document.querySelector('select[name="seller_id"]').value = vehicle.seller_id;
+                                document.querySelector('select[name="seller_id"]').value = vehicle
+                                    .seller_id;
                             }
 
                             // Populate warranty status if exists
                             if (vehicle.warranty_status) {
-                                document.querySelector('select[name="warranty_status"]').value = vehicle.warranty_status;
+                                document.querySelector('select[name="warranty_status"]').value =
+                                    vehicle.warranty_status;
                             }
 
                             // Populate inspection status if exists
                             if (vehicle.inspection_status) {
-                                document.querySelector('select[name="inspection_status"]').value = vehicle.inspection_status;
+                                document.querySelector('select[name="inspection_status"]').value =
+                                    vehicle.inspection_status;
                             }
 
                             // Populate previous owners if exists
                             if (vehicle.num_previous_owners) {
-                                document.querySelector('input[name="previous_owners"]').value = vehicle.num_previous_owners;
+                                document.querySelector('input[name="previous_owners"]').value =
+                                    vehicle.num_previous_owners;
                             }
 
                             // Populate tire information if exists
@@ -1127,10 +1340,17 @@
                                     if (!position) return;
 
                                     const inputs = {
-                                        tread_depth: document.querySelector(`input[name="tire_tread_depth_${position}"]`),
-                                        rim_type: document.querySelector(`select[name="tire_rim_type_${position}"]`),
-                                        tire_type: document.querySelector(`select[name="tire_type_${position}"]`),
-                                        rim_status: document.querySelector(`select[name="tire_rim_status_${position}"]`)
+                                        tread_depth: document.querySelector(
+                                            `input[name="tire_tread_depth_${position}"]`
+                                        ),
+                                        rim_type: document.querySelector(
+                                            `select[name="tire_rim_type_${position}"]`
+                                        ),
+                                        tire_type: document.querySelector(
+                                            `select[name="tire_type_${position}"]`),
+                                        rim_status: document.querySelector(
+                                            `select[name="tire_rim_status_${position}"]`
+                                        )
                                     };
 
                                     Object.entries(inputs).forEach(([key, element]) => {
@@ -1149,20 +1369,29 @@
                                     vehicle.damage_records.forEach(damage => {
                                         addDamageRecord(); // Use correct function name
                                         const index = damageContainer.children.length - 1;
-                                        const currentDamage = damageContainer.children[index];
+                                        const currentDamage = damageContainer.children[
+                                            index];
 
                                         if (currentDamage) {
                                             if (damage.description) {
-                                                currentDamage.querySelector(`input[name="damages[${index}][damage_description]"]`).value = damage.description;
+                                                currentDamage.querySelector(
+                                                    `input[name="damages[${index}][damage_description]"]`
+                                                ).value = damage.description;
                                             }
                                             if (damage.damage_type) {
-                                                currentDamage.querySelector(`select[name="damages[${index}][damage_type]"]`).value = damage.damage_type;
+                                                currentDamage.querySelector(
+                                                    `select[name="damages[${index}][damage_type]"]`
+                                                ).value = damage.damage_type;
                                             }
                                             if (damage.location) {
-                                                currentDamage.querySelector(`select[name="damages[${index}][location]"]`).value = damage.location;
+                                                currentDamage.querySelector(
+                                                    `select[name="damages[${index}][location]"]`
+                                                ).value = damage.location;
                                             }
                                             if (damage.cost) {
-                                                currentDamage.querySelector(`input[name="damages[${index}][repair_cost]"]`).value = damage.cost;
+                                                currentDamage.querySelector(
+                                                    `input[name="damages[${index}][repair_cost]"]`
+                                                ).value = damage.cost;
                                             }
                                         }
                                     });
@@ -1170,21 +1399,30 @@
                             }
 
                             // Populate additional equipment if they exist
-                            if (vehicle.additional_equipment && vehicle.additional_equipment.length > 0) {
-                                const equipmentContainer = document.getElementById('additionalEquipment');
+                            if (vehicle.additional_equipment && vehicle.additional_equipment
+                                .length > 0) {
+                                const equipmentContainer = document.getElementById(
+                                    'additionalEquipment');
                                 if (equipmentContainer) {
                                     equipmentContainer.innerHTML = ''; // Clear existing equipment
                                     vehicle.additional_equipment.forEach(equip => {
                                         addEquipment(); // Add new equipment form
-                                        const index = equipmentContainer.children.length - 1;
-                                        const currentEquipment = equipmentContainer.children[index];
+                                        const index = equipmentContainer.children.length -
+                                            1;
+                                        const currentEquipment = equipmentContainer
+                                            .children[index];
 
                                         if (currentEquipment) {
                                             if (equip.equipment_description) {
-                                                currentEquipment.querySelector(`input[name="equipment[${index}][name]"]`).value = equip.equipment_description;
+                                                currentEquipment.querySelector(
+                                                        `input[name="equipment[${index}][name]"]`
+                                                    ).value = equip
+                                                    .equipment_description;
                                             }
                                             if (equip.condition) {
-                                                currentEquipment.querySelector(`select[name="equipment[${index}][condition]"]`).value = equip.condition;
+                                                currentEquipment.querySelector(
+                                                    `select[name="equipment[${index}][condition]"]`
+                                                ).value = equip.condition;
                                             }
                                         }
                                     });
@@ -1341,15 +1579,22 @@
 
                         // Extract damage records
                         const damages = [];
-                        document.querySelectorAll('#damageRecords > div').forEach((element, index) => {
+                        document.querySelectorAll('#damageRecords > div').forEach((element,
+                            index) => {
                             damages.push({
                                 vin: this.selectedVehicle.vin,
-                                damage_date: formData.get(`damages[${index}][damage_date]`),
-                                damage_type: formData.get(`damages[${index}][damage_type]`),
-                                location: formData.get(`damages[${index}][location]`),
-                                description: formData.get(`damages[${index}][damage_description]`),
-                                cost: formData.get(`damages[${index}][repair_cost]`) || null,
-                                repair_status: formData.get(`damages[${index}][repair_status]`),
+                                damage_date: formData.get(
+                                    `damages[${index}][damage_date]`),
+                                damage_type: formData.get(
+                                    `damages[${index}][damage_type]`),
+                                location: formData.get(
+                                    `damages[${index}][location]`),
+                                description: formData.get(
+                                    `damages[${index}][damage_description]`),
+                                cost: formData.get(
+                                    `damages[${index}][repair_cost]`) || null,
+                                repair_status: formData.get(
+                                    `damages[${index}][repair_status]`),
                                 repair_date: null // Will be set when repair is completed
                             });
                         });
@@ -1397,18 +1642,19 @@
                         }
 
                         // Update the vehicle status from "Pending" to "Available" after confirmation
-                        const updateVehicleStatus = await fetch(`/api/vehicles/${this.selectedVehicle.vin}`, {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector(
-                                    'meta[name="csrf-token"]').getAttribute('content')
-                            },
-                            body: JSON.stringify({
-                                status: 'Available'
-                            })
-                        });
+                        const updateVehicleStatus = await fetch(
+                            `/api/vehicles/${this.selectedVehicle.vin}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector(
+                                        'meta[name="csrf-token"]').getAttribute('content')
+                                },
+                                body: JSON.stringify({
+                                    status: 'Available'
+                                })
+                            });
 
                         if (!updateVehicleStatus.ok) {
                             console.error('Warning: Failed to update vehicle status to Available');
@@ -1428,10 +1674,208 @@
                     }
                 },
 
-                // Continue to contract process placeholder
+                // Continue to contract process
                 continueToContract() {
                     console.log('Continue to contract process');
-                    // Contract implementation will be added later
+                    this.completedConfirmation = false;
+                    this.contractProcess = true;
+                    this.contractStep = 'registration';
+
+                    // Initialize the contract data
+                    this.contractData = {
+                        vin: this.selectedVehicle ? this.selectedVehicle.vin : null,
+                        first_registration: this.selectedVehicle ? this.selectedVehicle
+                            .first_registration || null : null,
+                        purchase_price: this.selectedVehicle ? this.selectedVehicle
+                            .purchase_price || 0 : 0,
+                        contract_date: new Date().toISOString().split('T')[0],
+                        signature: null
+                    };
+
+                    this.purchaseLogData = {
+                        vin: this.selectedVehicle ? this.selectedVehicle.vin : null,
+                        purchase_date: new Date().toISOString().split('T')[0],
+                        purchase_price: this.selectedVehicle ? this.selectedVehicle
+                            .purchase_price || 0 : 0,
+                        purchased_from: '',
+                        notes: ''
+                    };
+                },
+
+                // Submit vehicle registration and purchase price
+                async submitRegistrationData() {
+                    try {
+                        console.log('Submitting registration data...');
+                        if (!this.contractData.first_registration) {
+                            alert('Please enter the first registration date');
+                            return;
+                        }
+
+                        if (!this.contractData.purchase_price || this.contractData.purchase_price <=
+                            0) {
+                            alert('Please enter a valid purchase price');
+                            return;
+                        }
+
+                        // Update the vehicle with registration date and purchase price
+                        const response = await fetch(`/api/vehicles/${this.contractData.vin}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector(
+                                    'meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                first_registration: this.contractData
+                                    .first_registration,
+                                purchase_price: this.contractData.purchase_price
+                            })
+                        });
+
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(errorData.message ||
+                                'Failed to update vehicle registration information');
+                        }
+
+                        console.log('Registration data saved successfully');
+
+                        // Move to contract generation step
+                        this.contractStep = 'contract';
+
+                        // Initialize signature pad when moving to contract step
+                        setTimeout(() => {
+                            this.initSignaturePad();
+                        }, 100);
+                    } catch (error) {
+                        console.error('Error updating vehicle registration:', error);
+                        alert('Error: ' + error.message);
+                    }
+                },
+
+                // Initialize signature pad
+                initSignaturePad() {
+                    setTimeout(() => {
+                        const canvas = document.getElementById('signatureCanvas');
+                        if (canvas) {
+                            console.log('Initializing signature pad...');
+                            this.signaturePad = new SignaturePad(canvas, {
+                                backgroundColor: 'rgb(255, 255, 255)',
+                                penColor: 'rgb(0, 0, 0)'
+                            });
+
+                            // Adjust canvas size
+                            canvas.width = canvas.offsetWidth;
+                            canvas.height = canvas.offsetHeight;
+                        }
+                    }, 100);
+                },
+
+                // Clear signature pad
+                clearSignature() {
+                    if (this.signaturePad) {
+                        this.signaturePad.clear();
+                    }
+                },
+
+                // Submit contract with signature
+                async submitContract() {
+                    try {
+                        if (!this.signaturePad || this.signaturePad.isEmpty()) {
+                            alert('Please provide a signature');
+                            return;
+                        }
+
+                        // Convert signature to data URL
+                        this.contractData.signature = this.signaturePad.toDataURL();
+
+                        // Create procurement contract
+                        const contractResponse = await fetch('/api/procurement-contracts', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector(
+                                    'meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                vin: this.contractData.vin,
+                                contract_date: this.contractData.contract_date,
+                                contract_price: this.contractData.purchase_price,
+                                signature: this.contractData.signature
+                            })
+                        });
+
+                        if (!contractResponse.ok) {
+                            throw new Error('Failed to create procurement contract');
+                        }
+
+                        const contract = await contractResponse.json();
+                        this.procurementContract = contract;
+
+                        // Move to purchase log step
+                        this.contractStep = 'purchaseLog';
+                    } catch (error) {
+                        console.error('Error creating procurement contract:', error);
+                        alert('Error: ' + error.message);
+                    }
+                },
+
+                // Submit purchase log
+                async submitPurchaseLog() {
+                    try {
+                        if (!this.purchaseLogData.purchased_from) {
+                            alert('Please enter who the vehicle was purchased from');
+                            return;
+                        }
+
+                        // Create purchase log
+                        const logResponse = await fetch('/api/purchase-logs', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector(
+                                    'meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify(this.purchaseLogData)
+                        });
+
+                        if (!logResponse.ok) {
+                            throw new Error('Failed to create purchase log');
+                        }
+
+                        // Update vehicle status to Procured
+                        const updateVehicleResponse = await fetch(
+                            `/api/vehicles/${this.contractData.vin}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector(
+                                        'meta[name="csrf-token"]').getAttribute('content')
+                                },
+                                body: JSON.stringify({
+                                    status: 'Procured'
+                                })
+                            });
+
+                        if (!updateVehicleResponse.ok) {
+                            console.warn('Warning: Failed to update vehicle status to Procured');
+                        }
+
+                        // Show completion step
+                        this.contractStep = 'complete';
+                    } catch (error) {
+                        console.error('Error creating purchase log:', error);
+                        alert('Error: ' + error.message);
+                    }
+                },
+
+                // Navigate to vehicle visualizer
+                viewVehicle() {
+                    window.location.href = `/vehicle/${this.contractData.vin}`;
                 },
 
                 async initNewVehicle() {
@@ -1469,53 +1913,54 @@
 
             // Load customer types for seller form
             fetch('/api/customer-types', {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                const select = document.getElementById('seller_type');
-                select.innerHTML = '<option value="">Select Type</option>';
-                data.forEach(type => {
-                    const option = document.createElement('option');
-                    option.value = type.customer_type_id;
-                    option.textContent = type.type_name;
-                    select.appendChild(option);
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('seller_type');
+                    select.innerHTML = '<option value="">Select Type</option>';
+                    data.forEach(type => {
+                        const option = document.createElement('option');
+                        option.value = type.customer_type_id;
+                        option.textContent = type.type_name;
+                        select.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading customer types:', error);
                 });
-            })
-            .catch(error => {
-                console.error('Error loading customer types:', error);
-            });
 
             // Load addresses for seller form
             fetch('/api/addresses', {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                const select = document.getElementById('seller_address');
-                select.innerHTML = '<option value="">Select Address</option>';
-                data.forEach(address => {
-                    const option = document.createElement('option');
-                    option.value = address.address_id;
-                    option.textContent = `${address.street}, ${address.city}`;
-                    select.appendChild(option);
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('seller_address');
+                    select.innerHTML = '<option value="">Select Address</option>';
+                    data.forEach(address => {
+                        const option = document.createElement('option');
+                        option.value = address.address_id;
+                        option.textContent = `${address.street}, ${address.city}`;
+                        select.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading addresses:', error);
                 });
-            })
-            .catch(error => {
-                console.error('Error loading addresses:', error);
-            });
         });
 
         // Load vehicles for confirmation process
         async function loadVehiclesForConfirmation() {
             try {
-                const response = await fetch('/api/vehicles/needs-confirmation');                console.log('Loading vehicles for confirmation...');
+                const response = await fetch('/api/vehicles/needs-confirmation');
+                console.log('Loading vehicles for confirmation...');
                 if (!response.ok) throw new Error('Failed to fetch vehicles');
                 // Parse the response as JSON
                 // Check if the response is empty
