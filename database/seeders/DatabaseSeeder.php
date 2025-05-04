@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             BuyerSeeder::class,
             SellerSeeder::class,
             VehicleSeeder::class,
+            VehicleConfirmationSeeder::class,
             EngineSpecificationSeeder::class,
             PurchaseContractSeeder::class,
             ProcurementContractSeeder::class,
