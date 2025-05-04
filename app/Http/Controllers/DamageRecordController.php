@@ -26,12 +26,10 @@ class DamageRecordController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'vin' => 'required|string|exists:vehicles,vin',
-            'damage_date' => 'required|date',
-            'damage_description' => 'required|string',
-            'repair_status' => 'required|string|in:Pending,In Progress,Completed,Not Repairable',
-            'repair_cost' => 'nullable|numeric|min:0',
-            'repair_date' => 'nullable|date|after_or_equal:damage_date',
-            'insurance_claim_number' => 'nullable|string|max:50',
+            'damage_type' => 'required|string|in:Dent,Scruff,Damage',
+            'location' => 'required|string',
+            'description' => 'required|string',
+            'cost' => 'required|numeric|min:0',
         ]);
 
         if ($validator->fails()) {
@@ -40,11 +38,8 @@ class DamageRecordController extends Controller
 
         try {
             DB::beginTransaction();
-
             $damageRecord = DamageRecord::create($request->all());
-
             DB::commit();
-
             return response()->json($damageRecord, 201);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -70,12 +65,10 @@ class DamageRecordController extends Controller
 
         $validator = Validator::make($request->all(), [
             'vin' => 'sometimes|required|string|exists:vehicles,vin',
-            'damage_date' => 'sometimes|required|date',
-            'damage_description' => 'sometimes|required|string',
-            'repair_status' => 'sometimes|required|string|in:Pending,In Progress,Completed,Not Repairable',
-            'repair_cost' => 'nullable|numeric|min:0',
-            'repair_date' => 'nullable|date|after_or_equal:damage_date',
-            'insurance_claim_number' => 'nullable|string|max:50',
+            'damage_type' => 'sometimes|required|string|in:Dent,Scruff,Damage',
+            'location' => 'sometimes|required|string',
+            'description' => 'sometimes|required|string',
+            'cost' => 'sometimes|required|numeric|min:0',
         ]);
 
         if ($validator->fails()) {
@@ -84,11 +77,8 @@ class DamageRecordController extends Controller
 
         try {
             DB::beginTransaction();
-
             $damageRecord->update($request->all());
-
             DB::commit();
-
             return response()->json($damageRecord);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -105,11 +95,8 @@ class DamageRecordController extends Controller
 
         try {
             DB::beginTransaction();
-
             $damageRecord->delete();
-
             DB::commit();
-
             return response()->json(['message' => 'Damage record deleted successfully'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -124,14 +111,5 @@ class DamageRecordController extends Controller
     {
         $damageRecords = DamageRecord::where('vin', $vin)->get();
         return response()->json($damageRecords);
-    }
-
-    /**
-     * Get vehicles for damage record form
-     */
-    public function getVehicles()
-    {
-        $vehicles = Vehicle::all();
-        return response()->json($vehicles);
     }
 }
