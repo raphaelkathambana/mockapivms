@@ -27,12 +27,10 @@ class EngineSpecificationController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'vin' => 'required|string|exists:vehicles,vin',
-            'engine_number' => 'required|string|max:50|unique:engine_specifications',
-            'engine_capacity' => 'required|numeric|min:0',
-            'power_output' => 'required|integer|min:0',
+            'kw' => 'numeric|min:0',
+            'hp' => 'numeric|min:0',
+            'ccm' => 'required|integer|min:0',
             'fuel_type_id' => 'required|exists:fuel_types,fuel_type_id',
-            'emission_class' => 'required|string|max:50',
-            'co2_emission' => 'required|numeric|min:0',
         ]);
 
         if ($validator->fails()) {
