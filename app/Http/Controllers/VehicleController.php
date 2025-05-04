@@ -237,7 +237,7 @@ class VehicleController extends Controller
      */
     public function getVehiclesNeedingConfirmation()
     {
-        $vehicles = Vehicle::whereDoesntHave('vehicleConfirmation')
+        $vehicles = Vehicle::whereDoesntHave('procurementContract')
             ->with([
                 'manufacturer',
                 'model',
