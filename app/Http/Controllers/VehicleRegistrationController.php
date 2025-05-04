@@ -26,11 +26,9 @@ class VehicleRegistrationController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'vin' => 'required|string|exists:vehicles,vin',
-            'license_plate' => 'required|string|max:20|unique:vehicle_registrations',
-            'registration_date' => 'required|date',
-            'expiry_date' => 'required|date|after:registration_date',
-            'registration_authority' => 'required|string|max:255',
-            'registration_document_number' => 'required|string|max:50|unique:vehicle_registrations',
+            'custom_license_plate' => 'required|string|max:20|unique:vehicle_registrations',
+            'delivery_date' => 'required|date',
+            'sepa_data' => 'required|string|max:255',
         ]);
 
         if ($validator->fails()) {
