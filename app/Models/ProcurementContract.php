@@ -29,6 +29,7 @@ class ProcurementContract extends Model
         'contract_date',
         'digital_signature',
         'purchase_amount',
+        'signature',
     ];
 
     /**

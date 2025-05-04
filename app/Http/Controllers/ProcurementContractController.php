@@ -29,11 +29,11 @@ class ProcurementContractController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'vin' => 'required|string|exists:vehicles,vin',
-            'seller_id' => 'required|exists:sellers,seller_id',
-            'employee_id' => 'required|exists:employees,employee_id',
             'contract_date' => 'required|date',
-            'digital_signature' => 'nullable',
-            'purchase_amount' => 'required|numeric|min:0',
+            'signature' => 'required|string',
+            'contract_price' => 'required|numeric|min:0',
+            'seller_id' => 'nullable|exists:sellers,seller_id',
+            'employee_id' => 'nullable|exists:employees,employee_id',
         ]);
 
         if ($validator->fails()) {
@@ -44,23 +44,21 @@ class ProcurementContractController extends Controller
             DB::beginTransaction();
 
             // Create the procurement contract
-            $procurementContract = ProcurementContract::create($request->all());
-
-            // Update the vehicle with seller information and set status
-            $vehicle = Vehicle::findOrFail($request->vin);
-            $vehicle->update([
+            $procurementContract = ProcurementContract::create([
+                'vin' => $request->vin,
                 'seller_id' => $request->seller_id,
-                'status' => 'Available', // Or whatever initial inventory status you use
-                'purchase_price' => $request->purchase_amount, // Assuming you want to update purchase price
+                'employee_id' => $request->employee_id,
+                'contract_date' => $request->contract_date,
+                'digital_signature' => $request->signature, // Store signature blob as digital_signature
+                'signature' => $request->signature, // Also store in signature field for backward compatibility
+                'purchase_amount' => $request->contract_price,
             ]);
 
-            // Create a purchase log entry for this procurement
-            PurchaseLog::create([
-                'timestamp' => $request->contract_date,
-                'vin' => $request->vin,
-                'employee_id' => $request->employee_id,
-                'seller_id' => $request->seller_id,
-                'status_change' => 'Vehicle Purchased via Contract',
+            // Update the vehicle with procurement contract information
+            $vehicle = Vehicle::findOrFail($request->vin);
+            $vehicle->update([
+                'status' => 'Processing', // Set to processing until purchase log is created
+                'purchase_price' => $request->contract_price,
             ]);
 
             DB::commit();
