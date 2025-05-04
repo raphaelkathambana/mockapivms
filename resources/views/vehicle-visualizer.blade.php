@@ -769,40 +769,45 @@
                 editVehicle(vin);
             });
 
-            // Handle form submission
+            // Event handler for form submission
             vehicleDataForm.addEventListener('submit', function(e) {
                 e.preventDefault();
 
                 const vehicleId = vehicleIdField.value;
                 const vehicleData = {
                     vin: vinField.value,
-                    license_plate: licensePlateField.value,
                     manufacturer_id: manufacturerField.value,
                     model_id: modelField.value,
-                    year: yearField.value,
+                    first_registration: purchaseDateField.value || null,
                     color: colorField.value,
                     status: statusField.value,
-                    vehicle_type_id: vehicleTypeField.value || null,
+                    type_id: vehicleTypeField.value || null,
                     drive_type_id: driveTypeField.value || null,
-                    fuel_type_id: fuelTypeField.value || null,
                     transmission_id: transmissionField.value || null,
                     mileage: mileageField.value || null,
-                    engine_size: engineSizeField.value || null,
-                    power: powerField.value || null,
                     owner_type_id: ownerTypeField.value || null,
                     seller_id: sellerField.value || null,
-                    purchase_date: purchaseDateField.value || null,
                     purchase_price: purchasePriceField.value || null,
-                    description: descriptionField.value || null,
-                    list_price: listPriceField.value || null,
-                    features: featuresField.value || null,
-                    notes: notesField.value || null
+                    selling_price: listPriceField.value || null,
+                    num_previous_owners: 0, // Default to 0 for new vehicles
+                    additional_info: descriptionField.value || null,
+                    days_on_stock: 0, // Default to 0 for new vehicles
+                    evaluation_date: new Date().toISOString().split('T')[0] // Current date
+                };
+
+                // Create engine specification data separately
+                const engineData = {
+                    vin: vinField.value,
+                    kw: powerField.value ? parseInt(powerField.value) * 0.7457 : null, // Convert HP to kW
+                    hp: powerField.value ? parseInt(powerField.value) : null,
+                    ccm: engineSizeField.value ? parseInt(engineSizeField.value) : null,
+                    fuel_type_id: fuelTypeField.value || null
                 };
 
                 if (vehicleId) {
-                    updateVehicle(vehicleId, vehicleData);
+                    updateVehicle(vehicleId, vehicleData, engineData);
                 } else {
-                    createVehicle(vehicleData);
+                    createVehicle(vehicleData, engineData);
                 }
             });
 
@@ -820,7 +825,7 @@
             });
 
             // Create a new vehicle
-            function createVehicle(vehicleData) {
+            function createVehicle(vehicleData, engineData) {
                 showLoading();
                 hideError();
 
@@ -883,11 +888,6 @@
                             `${vehicle.first_registration ? new Date(vehicle.first_registration).getFullYear() : ''} ${vehicle.manufacturer ? vehicle.manufacturer.name : ''} ${vehicle.model ? vehicle.model.model_name : ''}`;
                         document.getElementById('detailVin').textContent = vehicle.vin;
 
-                        // Find the line where we set the license plate value
-                        // Replace this line:
-                        //document.getElementById('detailLicensePlate').textContent = vehicle.license_plate || '-';
-
-                        // With this more comprehensive code that checks the vehicle_registration relationship:
                         // For license plate, check the vehicle_registration relationship
                         let licensePlate = '-';
                         if (vehicle.vehicle_registration && vehicle.vehicle_registration.custom_license_plate) {
@@ -1214,7 +1214,7 @@
             }
 
             // Update an existing vehicle
-            function updateVehicle(vin, vehicleData) {
+            function updateVehicle(vin, vehicleData, engineData) {
                 showLoading();
                 hideError();
 
