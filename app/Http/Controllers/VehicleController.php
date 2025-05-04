@@ -44,7 +44,7 @@ class VehicleController extends Controller
         $validator = Validator::make($request->all(), [
             'vin' => 'required|string|max:17|unique:vehicles,vin',
             'manufacturer_id' => 'required|exists:manufacturers,manufacturer_id',
-            'model_id' => 'required|exists:models,model_id',
+            'model_id' => 'required|exists:vehicle_models,model_id',
             'first_registration' => 'nullable|date',
             'mileage' => 'required|integer|min:0',
             'transmission_id' => 'required|exists:transmissions,transmission_id',
@@ -60,7 +60,7 @@ class VehicleController extends Controller
             'days_on_stock' => 'nullable|integer|min:0',
             'buyer_id' => 'nullable|exists:buyers,customer_id',
             'seller_id' => 'nullable|exists:sellers,seller_id',
-            'status' => 'required|string|in:Available,Sold,Reserved',
+            'status' => 'required|string|in:Available,Sold,Reserved,Pending',
             'customer_number' => 'nullable|exists:buyers,customer_number',
             'additional_info' => 'nullable|string',
         ]);
@@ -122,7 +122,7 @@ class VehicleController extends Controller
 
         $validator = Validator::make($request->all(), [
             'manufacturer_id' => 'sometimes|required|exists:manufacturers,manufacturer_id',
-            'model_id' => 'sometimes|required|exists:models,model_id',
+            'model_id' => 'sometimes|required|exists:vehicle_models,model_id',
             'first_registration' => 'nullable|date',
             'mileage' => 'sometimes|required|integer|min:0',
             'transmission_id' => 'sometimes|required|exists:transmissions,transmission_id',
@@ -138,7 +138,7 @@ class VehicleController extends Controller
             'days_on_stock' => 'nullable|integer|min:0',
             'buyer_id' => 'nullable|exists:buyers,customer_id',
             'seller_id' => 'nullable|exists:sellers,seller_id',
-            'status' => 'sometimes|required|string|in:Available,Sold,Reserved',
+            'status' => 'sometimes|required|string|in:Available,Sold,Reserved,Pending',
             'customer_number' => 'nullable|exists:buyers,customer_number',
             'additional_info' => 'nullable|string',
         ]);
@@ -175,16 +175,8 @@ class VehicleController extends Controller
         try {
             DB::beginTransaction();
 
-            // Delete related records first
-            $vehicle->engineSpecification()->delete();
-            $vehicle->vehicleRegistration()->delete();
-            $vehicle->damageRecords()->delete();
-            $vehicle->tires()->delete();
-            $vehicle->inspectionRecords()->delete();
-            $vehicle->additionalEquipment()->delete();
-            $vehicle->salesLogs()->delete();
-
-            // Then delete the vehicle
+            // With the cascade delete in place, we can simply delete the vehicle
+            // and all related records will be automatically deleted
             $vehicle->delete();
 
             DB::commit();
@@ -213,5 +205,46 @@ class VehicleController extends Controller
         ];
 
         return response()->json($data);
+    }
+
+    /**
+     * Get available vehicles for selection.
+     */
+    public function getAvailableVehicles()
+    {
+        $vehicles = Vehicle::where('status', 'Available')
+            ->with(['manufacturer', 'model'])
+            ->get();
+
+        return response()->json($vehicles);
+    }
+
+    /**
+     * Get vehicles by manufacturer.
+     */
+    public function getByManufacturer($manufacturerId)
+    {
+        $vehicles = Vehicle::where('manufacturer_id', $manufacturerId)
+            ->with(['manufacturer', 'model'])
+            ->get();
+
+        return response()->json($vehicles);
+    }
+
+    /**
+     * Get vehicles that need confirmation.
+     * Vehicles need confirmation if they don't have a record in the vehicle_confirmations table.
+     */
+    public function getVehiclesNeedingConfirmation()
+    {
+        $vehicles = Vehicle::whereDoesntHave('vehicleConfirmation')
+            ->with([
+                'manufacturer',
+                'model',
+                'seller'
+            ])
+            ->get();
+
+        return response()->json($vehicles);
     }
 }

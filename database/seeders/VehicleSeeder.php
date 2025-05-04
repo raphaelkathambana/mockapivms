@@ -171,6 +171,7 @@ class VehicleSeeder extends Seeder
                 'evaluation_date' => '2023-01-15',
                 'last_edited_date' => now(),
                 'days_on_stock' => 60,
+                'seller_id' => 4,
                 'buyer_id' => Buyer::where('customer_number', 'B00001')->first()->customer_id,
                 'customer_number' => 'B00001',
                 'status' => 'Sold',
@@ -197,6 +198,7 @@ class VehicleSeeder extends Seeder
                 'buyer_id' => Buyer::where('customer_number', 'B00002')->first()->customer_id,
                 'customer_number' => 'B00002',
                 'status' => 'Sold',
+                'seller_id' => 3,
                 'additional_info' => 'M Sport package, premium sound system.',
             ],
             [
@@ -220,6 +222,7 @@ class VehicleSeeder extends Seeder
                 'buyer_id' => Buyer::where('customer_number', 'B00003')->first()->customer_id,
                 'customer_number' => 'B00003',
                 'status' => 'Sold',
+                'seller_id' => 1,
                 'additional_info' => 'Limited trim, sunroof.',
             ],
             [
@@ -241,6 +244,7 @@ class VehicleSeeder extends Seeder
                 'last_edited_date' => now(),
                 'days_on_stock' => 25,
                 'status' => 'Reserved',
+                'seller_id' => 1,
                 'additional_info' => 'AMG Line, Burmester sound system.',
             ],
         ];

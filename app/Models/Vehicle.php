@@ -139,4 +139,20 @@ class Vehicle extends Model
     {
         return $this->hasMany(PurchaseLog::class, 'vin');
     }
+
+    public function vehicleConfirmation(): HasOne
+    {
+        return $this->hasOne(VehicleConfirmation::class, 'vin');
+    }
+
+    /**
+     * Determine if this vehicle needs confirmation.
+     * A vehicle needs confirmation if it doesn't have a confirmation record yet.
+     *
+     * @return bool
+     */
+    public function getNeedsConfirmationAttribute(): bool
+    {
+        return !$this->vehicleConfirmation()->exists();
+    }
 }
