@@ -28,10 +28,12 @@ class PurchaseLogController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'vin' => 'required|string|exists:vehicles,vin',
-            'seller_id' => 'required|exists:sellers,seller_id',
-            'employee_id' => 'required|exists:employees,employee_id',
-            'timestamp' => 'required|date',
-            'status_change' => 'required|string',
+            'purchase_date' => 'required|date',
+            'purchase_price' => 'required|numeric|min:0',
+            'purchased_from' => 'required|string',
+            'notes' => 'nullable|string',
+            'employee_id' => 'nullable|exists:employees,employee_id',
+            'seller_id' => 'nullable|exists:sellers,seller_id',
         ]);
 
         if ($validator->fails()) {
@@ -43,22 +45,23 @@ class PurchaseLogController extends Controller
 
             // Create the purchase log
             $purchaseLog = PurchaseLog::create([
-                'timestamp' => $request->timestamp,
                 'vin' => $request->vin,
+                'purchase_date' => $request->purchase_date,
+                'purchase_price' => $request->purchase_price,
+                'purchased_from' => $request->purchased_from,
+                'notes' => $request->notes,
                 'employee_id' => $request->employee_id,
                 'seller_id' => $request->seller_id,
-                'status_change' => $request->status_change,
+                'status_change' => 'Vehicle Procured',
+                'timestamp' => now(),
             ]);
 
-            // If the status change is "Vehicle Purchased" or similar final status,
-            // update the vehicle's seller_id and status
-            if (in_array($request->status_change, ['Vehicle Purchased', 'Vehicle Added to Inventory'])) {
-                $vehicle = Vehicle::findOrFail($request->vin);
-                $vehicle->update([
-                    'seller_id' => $request->seller_id,
-                    'status' => 'Available', // or whatever your initial inventory status is
-                ]);
-            }
+            // Update the vehicle's status to Procured
+            $vehicle = Vehicle::findOrFail($request->vin);
+            $vehicle->update([
+'seller_id' => $request->seller_id,
+                'status' => 'Available', // or whatever your initial inventory status is
+            ]);
 
             DB::commit();
 
