@@ -17,11 +17,11 @@ class DamageRecord extends Model
         'damage_type',
         'location',
         'description',
-        'cost',
+        'cost'
     ];
 
     protected $casts = [
-        'cost' => 'decimal:2',
+        'cost' => 'decimal:2'
     ];
 
     public function vehicle(): BelongsTo
