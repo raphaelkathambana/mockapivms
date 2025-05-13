@@ -18,29 +18,25 @@ class PurchaseLogSeeder extends Seeder
     public function run(): void
     {
         // Get existing VINs, seller IDs, and employee IDs for reference
-        $vins = Vehicle::pluck('vin')->toArray();
-        $sellerIds = Seller::pluck('seller_id')->toArray();
+        $vehicles = Vehicle::all();
+        $sellers = Seller::all();
         $employeeIds = Employee::pluck('employee_id')->toArray();
 
-        // Possible status changes
-        $statusChanges = [
-            'Vehicle Inspection',
-            'Initial Vehicle Evaluation',
-            'Procurement Process Started',
-            'Procurement Offer Made',
-            'Procurement Offer Accepted',
-            'Vehicle Purchased',
-            'Vehicle Added to Inventory',
-        ];
+        // Create complete purchase cycle for each vehicle
+        foreach ($vehicles as $vehicle) {
+            $seller = $sellers->random();
+            $employeeId = $employeeIds[array_rand($employeeIds)];
 
-        // Create 20 sample purchase logs
-        for ($i = 0; $i < 20; $i++) {
+            // Base timestamp for this vehicle (30-90 days ago)
+            $baseTimestamp = Carbon::now()->subDays(rand(30, 90));
+
+            // Create a single entry with the new status format
             PurchaseLog::create([
-                'timestamp' => Carbon::now()->subDays(rand(1, 90))->subHours(rand(1, 24)),
-                'vin' => $vins[array_rand($vins)],
-                'employee_id' => $employeeIds[array_rand($employeeIds)],
-                'seller_id' => $sellerIds[array_rand($sellerIds)],
-                'status_change' => $statusChanges[array_rand($statusChanges)],
+                'timestamp' => $baseTimestamp->addHours(rand(1, 8)),
+                'vin' => $vehicle->vin,
+                'employee_id' => $employeeId,
+                'seller_id' => $seller->seller_id,
+                'status_change' => "vehicle {$vehicle->vin} purchased from {$seller->name}",
             ]);
         }
     }
