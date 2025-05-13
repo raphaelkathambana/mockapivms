@@ -16,6 +16,7 @@ class AdditionalEquipment extends Model
     protected $fillable = [
         'vin',
         'equipment_description',
+        'condition',
     ];
 
     public function vehicle(): BelongsTo
