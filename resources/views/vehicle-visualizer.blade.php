@@ -1169,7 +1169,7 @@
                                 manufacturerField.value = vehicle.manufacturer_id;
 
                                 // Load models for this manufacturer
-                                fetch(`/api/manufacturers/${vehicle.manufacturer_id}/models`, {
+                                fetch(`/api/vehicle-models/by-manufacturer/${vehicle.manufacturer_id}`, {
                                         headers: {
                                             'Accept': 'application/json',
                                             'X-Requested-With': 'XMLHttpRequest'
