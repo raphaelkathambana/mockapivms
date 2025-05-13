@@ -763,6 +763,14 @@
                             </div>
                             <div class="space-y-2">
                                 <p><strong>Authorized Signature:</strong></p>
+                                <div class="mb-2">
+                                    <label for="employeeSelect"
+                                        class="block text-sm font-medium text-gray-700">Employee Signing Contract</label>
+                                    <select id="employeeSelect" x-model="selectedEmployeeId"
+                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                        <option value="">Select Employee</option>
+                                    </select>
+                                </div>
                                 <div class="border bg-white rounded">
                                     <canvas id="signatureCanvas" class="w-full" height="150"></canvas>
                                 </div>
@@ -786,37 +794,14 @@
                     <div x-show="contractStep === 'purchaseLog'" class="space-y-4">
                         <h4 class="font-medium">Purchase Log</h4>
                         <form @submit.prevent="submitPurchaseLog" class="space-y-4">
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 gap-4">
                                 <div>
-                                    <label for="purchase_date"
-                                        class="block text-sm font-medium text-gray-700">Purchase Date</label>
-                                    <input type="date" id="purchase_date" x-model="purchaseLogData.purchase_date"
-                                        required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                                </div>
-                                <div>
-                                    <label for="purchase_price_log"
-                                        class="block text-sm font-medium text-gray-700">Purchase Price</label>
-                                    <input type="number" id="purchase_price_log"
-                                        x-model="purchaseLogData.purchase_price" required min="0"
-                                        step="0.01" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                                </div>
-                                <div class="col-span-2">
-                                    <label for="purchased_from"
-                                        class="block text-sm font-medium text-gray-700">Purchased From</label>
-                                    <input type="text" id="purchased_from"
-                                        x-model="purchaseLogData.purchased_from" required
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
-                                </div>
-                                <div class="col-span-2">
-                                    <label for="purchase_notes"
-                                        class="block text-sm font-medium text-gray-700">Notes</label>
-                                    <textarea id="purchase_notes" x-model="purchaseLogData.notes" rows="3"
-                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></textarea>
+                                    <label class="block text-sm font-medium text-gray-700">Status Change</label>
+                                    <input type="text" :value="purchaseLogStatusChange" readonly class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-100">
                                 </div>
                             </div>
                             <div class="flex justify-end">
-                                <button type="submit"
-                                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                                     Submit Purchase Log
                                 </button>
                             </div>
@@ -925,6 +910,8 @@
                     postal_code: '',
                     country: 'Germany'
                 },
+                selectedEmployeeId: '',
+                employees: [],
 
                 // Initialize the component
                 init() {
@@ -1641,6 +1628,10 @@
                             throw new Error(errorData.message);
                         }
 
+                        // change the selectedVehicle vin to the new vin
+                        this.selectedVehicle.vin = formData.get('vin');
+                        this.selectedVehicle.seller_id = sellerId;
+
                         // Update the vehicle status from "Pending" to "Available" after confirmation
                         const updateVehicleStatus = await fetch(
                             `/api/vehicles/${this.selectedVehicle.vin}`, {
@@ -1675,7 +1666,7 @@
                 },
 
                 // Continue to contract process
-                continueToContract() {
+                async continueToContract() {
                     console.log('Continue to contract process');
                     this.completedConfirmation = false;
                     this.contractProcess = true;
@@ -1700,6 +1691,8 @@
                         purchased_from: '',
                         notes: ''
                     };
+
+                    await this.loadEmployees();
                 },
 
                 // Submit vehicle registration and purchase price
@@ -1779,6 +1772,33 @@
                     }
                 },
 
+                // Load employees for contract signing
+                async loadEmployees() {
+                    try {
+                        const response = await fetch('/api/employees', {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        if (!response.ok) throw new Error('Failed to fetch employees');
+                        this.employees = await response.json();
+                        // Populate the select
+                        const select = document.getElementById('employeeSelect');
+                        if (select) {
+                            select.innerHTML = '<option value="">Select Employee</option>';
+                            this.employees.forEach(emp => {
+                                const option = document.createElement('option');
+                                option.value = emp.employee_id;
+                                option.textContent = emp.first_name + ' ' + emp.last_name;
+                                select.appendChild(option);
+                            });
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
+                },
+
                 // Submit contract with signature
                 async submitContract() {
                     try {
@@ -1786,9 +1806,15 @@
                             alert('Please provide a signature');
                             return;
                         }
+                        if (!this.selectedEmployeeId) {
+                            alert('Please select an employee to sign the contract');
+                            return;
+                        }
 
                         // Convert signature to data URL
                         this.contractData.signature = this.signaturePad.toDataURL();
+
+                        console.log('contract details', this.contractData);
 
                         // Create procurement contract
                         const contractResponse = await fetch('/api/procurement-contracts', {
@@ -1803,7 +1829,10 @@
                                 vin: this.contractData.vin,
                                 contract_date: this.contractData.contract_date,
                                 contract_price: this.contractData.purchase_price,
-                                signature: this.contractData.signature
+                                signature: this.contractData.signature,
+                                employee_id: this.selectedEmployeeId,
+                                seller_id: this.selectedVehicle && this.selectedVehicle.seller_id ?
+                                    this.selectedVehicle.seller_id : null
                             })
                         });
 
@@ -1825,47 +1854,29 @@
                 // Submit purchase log
                 async submitPurchaseLog() {
                     try {
-                        if (!this.purchaseLogData.purchased_from) {
-                            alert('Please enter who the vehicle was purchased from');
+                        const vin = this.selectedVehicle?.vin;
+                        const employee_id = this.selectedEmployeeId;
+                        const seller_id = this.selectedVehicle?.seller_id;
+                        if (!vin || !employee_id || !seller_id) {
+                            alert('Missing required data for purchase log.');
                             return;
                         }
-
-                        // Create purchase log
                         const logResponse = await fetch('/api/purchase-logs', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'Accept': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector(
-                                    'meta[name="csrf-token"]').getAttribute('content')
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             },
-                            body: JSON.stringify(this.purchaseLogData)
+                            body: JSON.stringify({
+                                vin,
+                                employee_id,
+                                seller_id
+                            })
                         });
-
                         if (!logResponse.ok) {
                             throw new Error('Failed to create purchase log');
                         }
-
-                        // Update vehicle status to Procured
-                        const updateVehicleResponse = await fetch(
-                            `/api/vehicles/${this.contractData.vin}`, {
-                                method: 'PUT',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Accept': 'application/json',
-                                    'X-CSRF-TOKEN': document.querySelector(
-                                        'meta[name="csrf-token"]').getAttribute('content')
-                                },
-                                body: JSON.stringify({
-                                    status: 'Procured'
-                                })
-                            });
-
-                        if (!updateVehicleResponse.ok) {
-                            console.warn('Warning: Failed to update vehicle status to Procured');
-                        }
-
-                        // Show completion step
                         this.contractStep = 'complete';
                     } catch (error) {
                         console.error('Error creating purchase log:', error);
@@ -1875,7 +1886,7 @@
 
                 // Navigate to vehicle visualizer
                 viewVehicle() {
-                    window.location.href = `/vehicle/${this.contractData.vin}`;
+                    window.location.href = `/vehicles`;
                 },
 
                 async initNewVehicle() {
@@ -1902,6 +1913,11 @@
                             this.value = Math.round(this.value / 5000) * 5000;
                         });
                     }
+                },
+
+                purchaseLogStatusChange() {
+                    if (!this.selectedVehicle || !this.selectedVehicle.vin || !this.selectedVehicle.seller) return '';
+                    return `vehicle ${this.selectedVehicle.vin} purchased from seller ${this.selectedVehicle.seller.first_name} ${this.selectedVehicle.seller.last_name}`;
                 },
             }));
         });
