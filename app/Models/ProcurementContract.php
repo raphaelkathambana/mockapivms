@@ -43,6 +43,30 @@ class ProcurementContract extends Model
     ];
 
     /**
+     * Convert the model instance to an array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'contract_id' => $this->contract_id,
+            'vin' => $this->vin,
+            'seller_id' => $this->seller_id,
+            'employee_id' => $this->employee_id,
+            'contract_date' => $this->contract_date ? $this->contract_date->toDateString() : null,
+            'purchase_amount' => $this->purchase_amount,
+            // 'digital_signature' => $this->digital_signature, // Potentially large, include if needed
+            // 'signature' => $this->signature, // Potentially large, include if needed
+            'vehicle' => $this->vehicle ? $this->vehicle->toArray() : null,
+            'seller' => $this->seller ? $this->seller->toArray() : null,
+            'employee' => $this->employee ? $this->employee->toArray() : null,
+            // 'created_at' => $this->created_at, // Optionally include timestamps
+            // 'updated_at' => $this->updated_at, // Optionally include timestamps
+        ];
+    }
+
+    /**
      * Get the vehicle that the contract is for.
      */
     public function vehicle(): BelongsTo

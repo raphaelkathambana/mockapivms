@@ -289,217 +289,104 @@
                     // Define table columns and form fields based on the selected table
                     switch (tableName) {
                         case 'customer-types':
-                            this.tableColumns = [{
-                                    key: 'customer_type_id',
-                                    label: 'ID'
-                                },
-                                {
-                                    key: 'type_name',
-                                    label: 'Type Name'
-                                }
+                            this.tableColumns = [
+                                { key: 'customer_type_id', label: 'ID' },
+                                { key: 'type_name', label: 'Type Name' }
                             ];
-                            this.formFields = [{
-                                name: 'type_name',
-                                label: 'Type Name',
-                                type: 'text',
-                                required: true
-                            }];
+                            this.formFields = [
+                                { name: 'type_name', label: 'Type Name', type: 'text', required: true }
+                            ];
                             break;
 
                         case 'owner-types':
-                            this.tableColumns = [{
-                                    key: 'owner_type_id',
-                                    label: 'ID'
-                                },
-                                {
-                                    key: 'type_name',
-                                    label: 'Type Name'
-                                }
+                            this.tableColumns = [
+                                { key: 'owner_type_id', label: 'ID' },
+                                { key: 'type_name', label: 'Type Name' }
                             ];
-                            this.formFields = [{
-                                name: 'type_name',
-                                label: 'Type Name',
-                                type: 'text',
-                                required: true
-                            }];
+                            this.formFields = [
+                                { name: 'type_name', label: 'Type Name', type: 'text', required: true }
+                            ];
                             break;
 
                         case 'fuel-types':
-                            this.tableColumns = [{
-                                    key: 'fuel_type_id',
-                                    label: 'ID'
-                                },
-                                {
-                                    key: 'fuel_name',
-                                    label: 'Fuel Name'
-                                }
+                            this.tableColumns = [
+                                { key: 'fuel_type_id', label: 'ID' },
+                                { key: 'fuel_name', label: 'Fuel Name' }
                             ];
-                            this.formFields = [{
-                                name: 'fuel_name',
-                                label: 'Fuel Name',
-                                type: 'text',
-                                required: true
-                            }];
+                            this.formFields = [
+                                { name: 'fuel_name', label: 'Fuel Name', type: 'text', required: true }
+                            ];
                             break;
 
                         case 'manufacturers':
-                            this.tableColumns = [{
-                                    key: 'manufacturer_id',
-                                    label: 'ID'
-                                },
-                                {
-                                    key: 'name',
-                                    label: 'Manufacturer Name'
-                                }
+                            this.tableColumns = [
+                                { key: 'manufacturer_id', label: 'ID' },
+                                { key: 'name', label: 'Manufacturer Name' },
+                                { key: 'country_of_origin', label: 'Country of Origin' }
                             ];
-                            this.formFields = [{
-                                name: 'name',
-                                label: 'Manufacturer Name',
-                                type: 'text',
-                                required: true
-                            }];
+                            this.formFields = [
+                                { name: 'name', label: 'Manufacturer Name', type: 'text', required: true },
+                                { name: 'country_of_origin', label: 'Country of Origin', type: 'text', required: true }
+                            ];
                             break;
 
                         case 'vehicle-models':
-                            this.tableColumns = [{
-                                    key: 'model_id',
-                                    label: 'ID'
-                                },
-                                {
-                                    key: 'manufacturer.name',
-                                    label: 'Manufacturer'
-                                },
-                                {
-                                    key: 'model_name',
-                                    label: 'Model Name'
-                                }
+                            this.tableColumns = [
+                                { key: 'model_id', label: 'ID' },
+                                { key: 'manufacturer.name', label: 'Manufacturer' },
+                                { key: 'model_name', label: 'Model Name' }
                             ];
-                            this.formFields = [{
-                                    name: 'manufacturer_id',
-                                    label: 'Manufacturer',
-                                    type: 'select',
-                                    required: true,
-                                    options: [] // Will be populated when form is shown
-                                },
-                                {
-                                    name: 'model_name',
-                                    label: 'Model Name',
-                                    type: 'text',
-                                    required: true
-                                }
+                            this.formFields = [
+                                { name: 'manufacturer_id', label: 'Manufacturer', type: 'select', required: true, options: [] },
+                                { name: 'model_name', label: 'Model Name', type: 'text', required: true }
                             ];
                             break;
 
                         case 'transmissions':
-                            this.tableColumns = [{
-                                    key: 'transmission_id',
-                                    label: 'ID'
-                                },
-                                {
-                                    key: 'type',
-                                    label: 'Transmission Type'
-                                }
+                            this.tableColumns = [
+                                { key: 'transmission_id', label: 'ID' },
+                                { key: 'type', label: 'Transmission Type' }
                             ];
-                            this.formFields = [{
-                                name: 'type',
-                                label: 'Transmission Type',
-                                type: 'text',
-                                required: true
-                            }];
+                            this.formFields = [
+                                { name: 'type', label: 'Transmission Type', type: 'text', required: true }
+                            ];
                             break;
 
                         case 'vehicle-types':
-                            this.tableColumns = [{
-                                    key: 'type_id',
-                                    label: 'ID'
-                                },
-                                {
-                                    key: 'type_name',
-                                    label: 'Type Name'
-                                }
+                            this.tableColumns = [
+                                { key: 'type_id', label: 'ID' },
+                                { key: 'type_name', label: 'Type Name' }
                             ];
-                            this.formFields = [{
-                                name: 'type_name',
-                                label: 'Type Name',
-                                type: 'text',
-                                required: true
-                            }];
+                            this.formFields = [
+                                { name: 'type_name', label: 'Type Name', type: 'text', required: true }
+                            ];
                             break;
 
                         case 'drive-types':
-                            this.tableColumns = [{
-                                    key: 'drive_type_id',
-                                    label: 'ID'
-                                },
-                                {
-                                    key: 'drive_type_name',
-                                    label: 'Drive Type Name'
-                                }
+                            this.tableColumns = [
+                                { key: 'drive_type_id', label: 'ID' },
+                                { key: 'drive_type_name', label: 'Drive Type Name' }
                             ];
-                            this.formFields = [{
-                                name: 'drive_type_name',
-                                label: 'Drive Type Name',
-                                type: 'text',
-                                required: true
-                            }];
+                            this.formFields = [
+                                { name: 'drive_type_name', label: 'Drive Type Name', type: 'text', required: true }
+                            ];
                             break;
 
                         case 'addresses':
-                            this.tableColumns = [{
-                                    key: 'address_id',
-                                    label: 'ID'
-                                },
-                                {
-                                    key: 'street',
-                                    label: 'Street'
-                                },
-                                {
-                                    key: 'house_number',
-                                    label: 'House Number'
-                                },
-                                {
-                                    key: 'city',
-                                    label: 'City'
-                                },
-                                {
-                                    key: 'postal_code',
-                                    label: 'Postal Code'
-                                },
-                                {
-                                    key: 'country',
-                                    label: 'Country'
-                                }
+                            this.tableColumns = [
+                                { key: 'address_id', label: 'ID' },
+                                { key: 'street', label: 'Street' },
+                                { key: 'house_number', label: 'House Number' },
+                                { key: 'city', label: 'City' },
+                                { key: 'postal_code', label: 'Postal Code' },
+                                { key: 'country', label: 'Country' }
                             ];
-                            this.formFields = [{
-                                    name: 'street',
-                                    label: 'Street',
-                                    type: 'text',
-                                    required: true
-                                },
-                                {
-                                    name: 'house_number',
-                                    label: 'House Number',
-                                    type: 'text',
-                                    required: true
-                                },
-                                {
-                                    name: 'city',
-                                    label: 'City',
-                                    type: 'text',
-                                    required: true
-                                },
-                                {
-                                    name: 'postal_code',
-                                    label: 'Postal Code',
-                                    type: 'text',
-                                    required: true
-                                },
-                                {
-                                    name: 'country',
-                                    label: 'Country',
-                                    type: 'text',
-                                    required: true
-                                }
+                            this.formFields = [
+                                { name: 'street', label: 'Street', type: 'text', required: true },
+                                { name: 'house_number', label: 'House Number', type: 'text', required: true },
+                                { name: 'city', label: 'City', type: 'text', required: true },
+                                { name: 'postal_code', label: 'Postal Code', type: 'text', required: true },
+                                { name: 'country', label: 'Country', type: 'text', required: true }
                             ];
                             break;
                     }

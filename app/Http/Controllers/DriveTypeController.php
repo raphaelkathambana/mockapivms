@@ -24,7 +24,7 @@ class DriveTypeController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'type_name' => 'required|string|max:255|unique:drive_types',
+            'drive_type_name' => 'required|string|max:255|unique:drive_types,drive_type_name',
         ]);
 
         if ($validator->fails()) {
@@ -62,7 +62,7 @@ class DriveTypeController extends Controller
         $driveType = DriveType::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
-            'type_name' => 'required|string|max:255|unique:drive_types,type_name,' . $id . ',drive_type_id',
+            'drive_type_name' => 'required|string|max:255|unique:drive_types,drive_type_name,' . $id . ',drive_type_id',
         ]);
 
         if ($validator->fails()) {

@@ -19,6 +19,26 @@ class Employee extends Model
         'email',
         'phone_number',
     ];
+
+    /**
+     * Convert the model instance to an array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'employee_id' => $this->employee_id,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'role' => $this->role,
+            'email' => $this->email,
+            'phone_number' => $this->phone_number,
+            // 'created_at' => $this->created_at, // Optionally include timestamps
+            // 'updated_at' => $this->updated_at, // Optionally include timestamps
+        ];
+    }
+
     /**
      * Get the sales logs for the employee.
      */

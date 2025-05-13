@@ -24,7 +24,7 @@ class FuelTypeController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'type_name' => 'required|string|max:255|unique:fuel_types',
+            'fuel_name' => 'required|string|max:255|unique:fuel_types,fuel_name',
         ]);
 
         if ($validator->fails()) {
@@ -62,7 +62,7 @@ class FuelTypeController extends Controller
         $fuelType = FuelType::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
-            'type_name' => 'required|string|max:255|unique:fuel_types,type_name,' . $id . ',fuel_type_id',
+            'fuel_name' => 'required|string|max:255|unique:fuel_types,fuel_name,' . $id . ',fuel_type_id',
         ]);
 
         if ($validator->fails()) {

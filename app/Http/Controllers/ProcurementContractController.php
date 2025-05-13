@@ -50,7 +50,7 @@ class ProcurementContractController extends Controller
                 'employee_id' => $request->employee_id,
                 'contract_date' => $request->contract_date,
                 'digital_signature' => $request->signature, // Store signature blob as digital_signature
-                'signature' => $request->signature, // Also store in signature field for backward compatibility
+                // 'signature' => $request->signature, // Also store in signature field for backward compatibility
                 'purchase_amount' => $request->contract_price,
             ]);
 
