@@ -90,9 +90,10 @@ class VehicleConfirmationController extends Controller
                 foreach ($request->damages as $damage) {
                     DamageRecord::create([
                         'vin' => $request->vin,
-                        'damage_description' => $damage['damage_description'],
-                        'damage_date' => $damage['damage_date'],
-                        'repair_status' => 'Pending'
+                        'description' => $damage['description'],
+                        'damage_type' => $damage['damage_type'],
+                        'location' => $damage['location'],
+                        'cost' => $damage['cost'],
                     ]);
                 }
             }
