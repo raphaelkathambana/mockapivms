@@ -14,6 +14,7 @@ class Manufacturer extends Model
 
     protected $fillable = [
         'name',
+        'country_of_origin',
     ];
 
     public function models(): HasMany
