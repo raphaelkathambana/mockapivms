@@ -24,10 +24,6 @@ class PurchaseLog extends Model
      */
     protected $fillable = [
         'vin',
-        'purchase_date',
-        'purchase_price',
-        'purchased_from',
-        'notes',
         'employee_id',
         'seller_id',
         'status_change',
@@ -40,8 +36,6 @@ class PurchaseLog extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'purchase_date' => 'date',
-        'purchase_price' => 'decimal:2',
         'timestamp' => 'datetime',
     ];
 

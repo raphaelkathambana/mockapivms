@@ -28,12 +28,8 @@ class PurchaseLogController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'vin' => 'required|string|exists:vehicles,vin',
-            'purchase_date' => 'required|date',
-            'purchase_price' => 'required|numeric|min:0',
-            'purchased_from' => 'required|string',
-            'notes' => 'nullable|string',
-            'employee_id' => 'nullable|exists:employees,employee_id',
-            'seller_id' => 'nullable|exists:sellers,seller_id',
+            'employee_id' => 'required|exists:employees,employee_id',
+            'seller_id' => 'required|exists:sellers,seller_id',
         ]);
 
         if ($validator->fails()) {
@@ -43,23 +39,21 @@ class PurchaseLogController extends Controller
         try {
             DB::beginTransaction();
 
-            // Create the purchase log
+            $seller = Seller::findOrFail($request->seller_id);
+            $statusChange = 'vehicle '.$request->vin.' purchased from seller '.$seller->first_name.' '.$seller->last_name;
+
             $purchaseLog = PurchaseLog::create([
                 'vin' => $request->vin,
-                'purchase_date' => $request->purchase_date,
-                'purchase_price' => $request->purchase_price,
-                'purchased_from' => $request->purchased_from,
-                'notes' => $request->notes,
                 'employee_id' => $request->employee_id,
                 'seller_id' => $request->seller_id,
-                'status_change' => 'Vehicle Procured',
+                'status_change' => $statusChange,
                 'timestamp' => now(),
             ]);
 
             // Update the vehicle's status to Procured
             $vehicle = Vehicle::findOrFail($request->vin);
             $vehicle->update([
-'seller_id' => $request->seller_id,
+                'seller_id' => $request->seller_id,
                 'status' => 'Available', // or whatever your initial inventory status is
             ]);
 
@@ -124,8 +118,8 @@ class PurchaseLogController extends Controller
             }
             // If only seller is changing on a final status log
             elseif (isset($request->seller_id) &&
-                   $request->seller_id !== $purchaseLog->seller_id &&
-                   in_array($purchaseLog->status_change, ['Vehicle Purchased', 'Vehicle Added to Inventory'])) {
+                $request->seller_id !== $purchaseLog->seller_id &&
+                in_array($purchaseLog->status_change, ['Vehicle Purchased', 'Vehicle Added to Inventory'])) {
                 $vehicle = Vehicle::findOrFail($purchaseLog->vin);
                 $vehicle->update([
                     'seller_id' => $request->seller_id,
@@ -133,8 +127,8 @@ class PurchaseLogController extends Controller
             }
             // If status is changing to a final one
             elseif (isset($request->status_change) &&
-                   !in_array($purchaseLog->status_change, ['Vehicle Purchased', 'Vehicle Added to Inventory']) &&
-                   in_array($request->status_change, ['Vehicle Purchased', 'Vehicle Added to Inventory'])) {
+                ! in_array($purchaseLog->status_change, ['Vehicle Purchased', 'Vehicle Added to Inventory']) &&
+                in_array($request->status_change, ['Vehicle Purchased', 'Vehicle Added to Inventory'])) {
                 $vehicle = Vehicle::findOrFail($purchaseLog->vin);
                 $vehicle->update([
                     'seller_id' => $purchaseLog->seller_id,
@@ -174,7 +168,7 @@ class PurchaseLogController extends Controller
                     ->orWhere('status_change', 'Vehicle Added to Inventory')
                     ->exists();
 
-                if (!$otherLogs) {
+                if (! $otherLogs) {
                     $vehicle->update([
                         'seller_id' => null,
                         // You might not want to change status if the vehicle is already sold
